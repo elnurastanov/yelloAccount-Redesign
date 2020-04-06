@@ -11,14 +11,7 @@ const layout = {
 };
 
 const validateMessages = {
-    required: `Boş saxlamayın!`,
-    types: {
-        email: `is not validate email!`,
-        number: `is not a validate number!`,
-    },
-    number: {
-        range: `must be between min and max`,
-    },
+    required: `Boş saxlamayın!`
 };
 
 

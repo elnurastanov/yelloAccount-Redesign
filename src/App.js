@@ -13,13 +13,14 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   UploadOutlined,
-  ContactsOutlined
+  ContactsOutlined,
+  TeamOutlined
 } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
 // const Dashboard = React.lazy(() => import('./panels/Dashboard'));
 const Salary = React.lazy(() => import('./panel/salary'));
-// const Leader = React.lazy(() => import('./panels/Leader'));
+const Staff = React.lazy(() => import('./panel/staff'));
 
 function App() {
 
@@ -81,7 +82,7 @@ function App() {
             </Menu.Item>
             <Menu.Item key="10" style={{ height: "3rem", lineHeight: "3rem" }}>
               <Link to="/Staff"></Link>
-              <UploadOutlined />
+              <TeamOutlined />
               <span>Kadrlar</span>
             </Menu.Item>
             <Menu.Item key="11" style={{ height: "3rem", lineHeight: "3rem" }}>
@@ -108,10 +109,10 @@ function App() {
             style={{
               margin: '24px 16px',
               padding: 24,
-              minHeight: 280,
+              minHeight: 280
             }}
           >
-            <Suspense fallback={<ReactLoading type={"bars"} color={"#6236ff"} height={'50px'} width={'50px'} delay={0} style={{margin: 'auto auto'}}/>}>
+            <Suspense fallback={<ReactLoading className='ReactLoading' type={"bars"} color={"#6236ff"} height={'50px'} width={'50px'} delay={0}/>}>
               <Switch>
                 <Route exact path="/" component={() => <h1>Dashboard</h1>} />
                 <Route exact path="/Organization" component={() => <h1>Organization</h1>} />
@@ -122,7 +123,7 @@ function App() {
                 <Route exact path="/ADV" component={() => <h1>ADV</h1>} />
                 <Route exact path="/QMA" component={() => <h1>QMA</h1>} />
                 <Route exact path="/Salary" component={Salary} />
-                <Route exact path="/Staff" component={() => <h1>Staff</h1>} />
+                <Route exact path="/Staff" component={Staff} />
                 <Route exact path="/Monitor" component={() => <h1>Monitor</h1>} />
                 <Route exact path="/Leader" component={() => <h1>Leader</h1>} />
               </Switch>

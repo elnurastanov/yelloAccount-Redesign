@@ -1,0 +1,49 @@
+@import '~antd/dist/antd.css';
+
+.Staff{
+    display: flex;
+    justify-content: space-between;
+}
+
+.Form__customLayout{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 70rem;
+}
+
+.Form__footer{
+    display: flex;
+    margin-top: 2rem;
+    justify-content: flex-end;
+    width: 70rem;
+}
+
+.Form__footer--button{
+    margin-left: 1rem;
+}
+
+.ant-spin-nested-loading{
+    height: 39.6rem;
+}
+
+.ant-list-vertical .ant-list-item-meta-title{
+    margin-bottom: 0;
+    font-size: 1.3rem;
+    line-height: 1.8rem;
+}
+
+.ant-list-item-meta-description{
+    font-size: 1.2rem;
+    line-height: 1.8rem;
+    
+}
+
+.modalContent{
+    display: flex;
+    justify-content: space-between;
+}
+
+.modalContent:not(:first-child){
+    margin-top: 1rem;
+}
