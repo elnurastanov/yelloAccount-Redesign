@@ -274,7 +274,7 @@ function Staff() {
                     pageSize: 10,
                 }}
 
-                style={{ width: 300 }}
+                style={{ width: 300, height: 396}}
                 dataSource={listData}
                 renderItem={item => (
                     <List.Item key={item.title} style={{ height: 40, paddingTop: 0, paddingBottom: 0, paddingLeft: 16, paddingRight: 16 }}>
@@ -446,12 +446,6 @@ function Staff() {
                             value={modalData.note}
                             onChange={(event) => { setModalData({ ...modalData, note: event.target.value }) }}
                             size='small' />
-                    </div>
-                    <div className="modalContent">
-
-                    </div>
-                    <div className="modalContent">
-
                     </div>
                 </Modal>
 

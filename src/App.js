@@ -1,24 +1,23 @@
 import React, { useState, Suspense } from 'react';
 import './App.css';
-import ReactLoading from 'react-loading';
 import {
   Switch,
   Route,
   Link
 } from "react-router-dom";
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Spin } from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
   UserOutlined,
-  VideoCameraOutlined,
   UploadOutlined,
   ContactsOutlined,
-  TeamOutlined
+  TeamOutlined,
+  BankOutlined
 } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
-// const Dashboard = React.lazy(() => import('./panels/Dashboard'));
+const Organization = React.lazy(() => import('./panel/organization'));
 const Salary = React.lazy(() => import('./panel/salary'));
 const Staff = React.lazy(() => import('./panel/staff'));
 
@@ -34,7 +33,7 @@ function App() {
       <Layout style={{ height: "100vh" }}>
         <Sider trigger={null} collapsible collapsed={collapsed}>
           <div className="logo" />
-          <Menu theme="dark" mode="inline" defaultSelectedKeys={['1']}>
+          <Menu theme="dark" mode="inline">
             <Menu.Item key="1" style={{ height: "3rem", lineHeight: "3rem" }}>
               <Link to="/"></Link>
               <UserOutlined />
@@ -42,7 +41,7 @@ function App() {
             </Menu.Item>
             <Menu.Item key="2" style={{ height: "3rem", lineHeight: "3rem" }}>
               <Link to="/Organization"></Link>
-              <VideoCameraOutlined />
+              <BankOutlined />
               <span>Təşkilat</span>
             </Menu.Item>
             <Menu.Item key="3" style={{ height: "3rem", lineHeight: "3rem" }}>
@@ -112,10 +111,10 @@ function App() {
               minHeight: 280
             }}
           >
-            <Suspense fallback={<ReactLoading className='ReactLoading' type={"bars"} color={"#6236ff"} height={'50px'} width={'50px'} delay={0}/>}>
+            <Suspense fallback={<Spin style={{marginLeft:'50%', marginTop: '25%'}} size="large" />}>
               <Switch>
                 <Route exact path="/" component={() => <h1>Dashboard</h1>} />
-                <Route exact path="/Organization" component={() => <h1>Organization</h1>} />
+                <Route exact path="/Organization" component={Organization} />
                 <Route exact path="/Bank" component={() => <h1>Bank</h1>} />
                 <Route exact path="/Treasure" component={() => <h1>Treasure</h1>} />
                 <Route exact path="/Buy" component={() => <h1>Buy</h1>} />

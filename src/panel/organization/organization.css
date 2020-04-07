@@ -1,0 +1,38 @@
+.ant-list{
+    margin-top: 1rem;
+}
+
+.ant-divider-horizontal{
+    margin: 0 0;
+}
+
+.Organization__content{
+    display: flex;
+    margin-top: 1.5rem;
+}
+
+.Organization__column{
+    display: flex;
+    flex-direction: column;
+    height: 30rem;
+    margin-right: 3rem;
+}
+
+.Organization__scroll{
+    flex-grow: 1;
+    overflow-y: scroll;
+    margin-top: 1rem;
+}
+
+.ant-list-item{
+    padding: 0;
+}
+
+.Modal__content{
+    display: flex;
+    flex-direction: column;
+}
+
+.ant-modal-body > .Modal__content:not(:first-child){
+    margin-top: 2rem;
+}
