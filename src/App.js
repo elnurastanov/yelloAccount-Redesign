@@ -23,7 +23,7 @@ const Staff = React.lazy(() => import('./panel/staff'));
 
 function App() {
 
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(true)
   function toggle() {
     setCollapsed(!collapsed)
   }

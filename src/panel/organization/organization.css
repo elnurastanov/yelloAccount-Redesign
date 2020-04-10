@@ -36,3 +36,7 @@
 .ant-modal-body > .Modal__content:not(:first-child){
     margin-top: 2rem;
 }
+
+.ant-list-empty-text{
+    padding: 0;
+}
