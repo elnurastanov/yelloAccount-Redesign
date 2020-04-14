@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { organization_departmentURL } from '../../../../config/apiconfig'
 import { Modal, Input, Typography, Select, message } from 'antd';
 import { PartitionOutlined } from '@ant-design/icons'
 
@@ -16,7 +15,7 @@ function DeapartmentModal({ visible, onVisibleChange = (value) => { } }) {
     })
 
     useEffect(() => {
-        axios.get(organization_departmentURL.getcompany)
+        axios.get('http://localhost:2000/v1/panel/')
             .then(result => {
                 setmodalOption(result.data)
             })
@@ -29,7 +28,7 @@ function DeapartmentModal({ visible, onVisibleChange = (value) => { } }) {
         if (modalDATA.companyID === '' || modalDATA.departmentName === '') {
             message.warning('Boş bölmə saxlamayın')
         } else {
-            axios.post(organization_departmentURL.post, modalDATA)
+            axios.post('http://localhost:2000/v1/panel/', modalDATA)
                 .then(result => {
                     if(result.data === 'OK'){
                         message.success('Departament əlavə edildi');

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import DepartamentModal from '../modal/department'
 import PositionModal from '../modal/position'
 import axios from 'axios'
-import { organization_departmentURL } from '../../../config/apiconfig'
 import { List, Button, Descriptions } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
 
@@ -13,7 +12,7 @@ function Content() {
     const [departmentData, setdepartmentData] = useState([])
 
     useEffect(() => {
-        axios.get(organization_departmentURL.get)
+        axios.get('http://localhost:2000/v1/panel/')
             .then(result => {
                 setdepartmentData(result.data)
             })

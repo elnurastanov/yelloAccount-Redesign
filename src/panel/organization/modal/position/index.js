@@ -1,40 +1,74 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { Modal, Input, Typography, Select } from 'antd';
 import { ReconciliationOutlined } from '@ant-design/icons'
 
 const { Text } = Typography
 const { Option } = Select
 
-function PositionModal({visible, onVisibleChange = (value) => {}}) {
+function PositionModal({ visible, onVisibleChange = (value) => { } }) {
 
-    const option = [
-        { company: 'Yello' },
-        { company: 'YelloAD' }
-    ]
+    const [modalCompanyOption, setmodalCompanyOption] = useState([])
+    const [modalDepartmentOption, setmodalDepartmentOption] = useState([])
+    const [positionModalData, setpositionModalData] = useState({
+        companyID: '',
+        departmentID: '',
+        positionName: ''
+    })
+
+    useEffect(() => {
+        axios.get('http://localhost:2000/v1/panel/')
+            .then(result => {
+                setmodalCompanyOption(result.data)
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }, [visible])
+
+    useEffect(() => {
+        if (positionModalData.companyID !== '') {
+            axios.post('http://localhost:2000/v1/panel/', positionModalData)
+            .then(result => {
+                setmodalDepartmentOption(result.data)
+            })
+            .catch(error => {
+                console.log(error)
+            });
+        }
+    }, [positionModalData])
 
     return (
         <Modal
             title="Vəzifə əlavə et"
             visible={visible}
-            onOk={() => { }}
-            onCancel={() => {onVisibleChange(false)}}
+            onOk={() => { console.log(positionModalData) }}
+            onCancel={() => { onVisibleChange(false) }}
         >
             <div className="Modal__content">
                 <Text strong>Şirkətin adı</Text>
-                <Select defaultValue="Şirkət" style={{ width: 200 }} >
+                <Select
+                    style={{ width: 200 }}
+                    value={positionModalData.companyID}
+                    onChange={(event) => setpositionModalData({ ...positionModalData, companyID: event })}
+                >
                     {
-                        option.map((data, index) => {
-                            return <Option key={index}>{data.company}</Option>
+                        modalCompanyOption.map((data, index) => {
+                            return <Option key={index} value={data.id}>{data.name}</Option>
                         })
                     }
                 </Select>
             </div>
             <div className="Modal__content">
                 <Text strong>Departamentin adı</Text>
-                <Select defaultValue="Departament" style={{ width: 200 }} >
+                <Select
+                    style={{ width: 200 }}
+                    value={positionModalData.departmentID}
+                    onChange={(event) => { }}
+                >
                     {
-                        option.map((data, index) => {
-                            return <Option key={index}>{data.company}</Option>
+                        modalDepartmentOption.map((data, index) => {
+                            return <Option key={index} value={data.id}>{data.name}</Option>
                         })
                     }
                 </Select>

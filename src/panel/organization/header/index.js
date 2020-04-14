@@ -1,28 +1,54 @@
 import React, { useState, useEffect } from 'react'
-import CompanyModal from '../modal/company'
-import axios from 'axios'
-import { organization_companyURL } from '../../../config/apiconfig'
-import { List, Card, Button, message } from 'antd';
-import { PlusCircleOutlined } from '@ant-design/icons'
+import AddCompanyModal from '../modal/company/addCompany'
+import ModifyCompany from '../modal/company/modifyCompany'
+import { getCompanies, deleteCompanies } from '../../../routes/OrganizationController'
+import { List, Card, Button, Modal, message, Result } from 'antd';
+import { PlusCircleOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
+
+const { confirm } = Modal;
 
 function Header() {
 
     const [companyDATA, setcompanyDATA] = useState([])
-    const [modalVisible, setModalVisible] = useState(false)
+    const [IDForModal, setIDForModal] = useState('')
+    const [AddCompanyModalVisible, setAddCompanyModalVisible] = useState({
+        addCompany: false,
+        modifyCompany: false
+    })
 
     useEffect(() => {
-        axios.get(organization_companyURL.get)
-        .then(result => {
-            setcompanyDATA(result.data);
-        }).catch(error => {
-            console.log(error);
-            message.error('Serverə qoşulma zamanı xəta baş verdi')
-        })
-    }, [modalVisible])
-    
+
+        getCompanies().then(
+            res => setcompanyDATA(res.data)
+        )
+
+    }, [AddCompanyModalVisible, companyDATA])
+
+    function showDeleteConfirm(id) {
+        confirm({
+            title: 'Bu şirkəti silməyinizə əminsiniz?',
+            icon: <ExclamationCircleOutlined />,
+            content: 'Şirkətlə bağlı bütün məlumatlar silinəcək!',
+            okText: 'Bəli',
+            okType: 'danger',
+            cancelText: 'Xeyr',
+            onOk() {
+                deleteCompanies(id).then(result => {
+                    if (result.status === 200) {
+                        message.success('Şirkət uğurla silindi')
+                    }
+                })
+            },
+            onCancel() { },
+        });
+    }
+
     return (
         <div className="Organization__header">
-            <Button type="primary" style={{ width: 150 }} icon={<PlusCircleOutlined />} onClick={() => { setModalVisible(true) }} block>
+            <Button type="primary"
+                style={{ width: 150 }}
+                icon={<PlusCircleOutlined />}
+                onClick={() => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, addCompany: true }) }} block>
                 Şirkət əlavə et
                 </Button>
             <List
@@ -30,11 +56,33 @@ function Header() {
                 dataSource={companyDATA}
                 renderItem={item => (
                     <List.Item>
-                        <Card title={item.name} size='small'>{item.direction}</Card>
+                        <Card
+                            title={item.name}
+                            size='small'
+                            hoverable={true}
+                            actions={[
+                                <EditOutlined
+                                    key="edit"
+                                    onClick={() => {
+                                        setAddCompanyModalVisible({ ...AddCompanyModalVisible, modifyCompany: true });
+                                        setIDForModal(item.id)
+                                    }}
+                                />,
+                                <DeleteOutlined key="delete" onClick={() => showDeleteConfirm(item.id)} />
+                            ]}
+                        >{item.direction}
+                        </Card>
                     </List.Item>
                 )}
             />
-            <CompanyModal visible={modalVisible} onVisibleChange={(value) => { setModalVisible(value) }} />
+            <AddCompanyModal
+                visibleAddCompany={AddCompanyModalVisible.addCompany}
+                onVisibleAddCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, addCompany: value }) }} />
+            <ModifyCompany
+                visibleModifyCompany={AddCompanyModalVisible.modifyCompany}
+                onVisibleModifyCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, modifyCompany: value }) }}
+                getID={IDForModal}
+            />
         </div>
     )
 }
