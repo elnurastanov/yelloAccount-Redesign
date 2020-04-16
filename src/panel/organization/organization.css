@@ -40,3 +40,7 @@
 .ant-list-empty-text{
     padding: 0;
 }
+
+.list--actions:hover{
+    color: dodgerblue;
+}

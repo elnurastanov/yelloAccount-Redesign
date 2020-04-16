@@ -2,10 +2,18 @@ import React, { useState, useEffect } from 'react'
 import AddCompanyModal from '../modal/company/addCompany'
 import ModifyCompany from '../modal/company/modifyCompany'
 import { getCompanies, deleteCompanies } from '../../../routes/OrganizationController'
-import { List, Card, Button, Modal, message, Result } from 'antd';
+import { List, Card, Button, Modal, message } from 'antd';
 import { PlusCircleOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
 const { confirm } = Modal;
+
+
+
+const _getcompany = (setState) => {
+    getCompanies().then(
+        res => setState(res.data)
+    )
+}
 
 function Header() {
 
@@ -22,7 +30,7 @@ function Header() {
             res => setcompanyDATA(res.data)
         )
 
-    }, [AddCompanyModalVisible, companyDATA])
+    }, [])
 
     function showDeleteConfirm(id) {
         confirm({
@@ -35,11 +43,12 @@ function Header() {
             onOk() {
                 deleteCompanies(id).then(result => {
                     if (result.status === 200) {
-                        message.success('Şirkət uğurla silindi')
+                        message.success('Şirkət uğurla silindi');
+                        _getcompany(setcompanyDATA);
                     }
                 })
             },
-            onCancel() { },
+            onCancel(){},
         });
     }
 
@@ -77,11 +86,14 @@ function Header() {
             />
             <AddCompanyModal
                 visibleAddCompany={AddCompanyModalVisible.addCompany}
-                onVisibleAddCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, addCompany: value }) }} />
+                onVisibleAddCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, addCompany: value }) }} 
+                refresh={() => {_getcompany(setcompanyDATA)}}
+                />
             <ModifyCompany
                 visibleModifyCompany={AddCompanyModalVisible.modifyCompany}
                 onVisibleModifyCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, modifyCompany: value }) }}
                 getID={IDForModal}
+                refresh={() => {_getcompany(setcompanyDATA)}}
             />
         </div>
     )

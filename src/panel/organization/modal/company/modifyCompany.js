@@ -5,7 +5,7 @@ import { ShopOutlined, NodeExpandOutlined } from '@ant-design/icons'
 const { Text } = Typography
 
 
-function ModifyCompany({ visibleModifyCompany, onVisibleModifyCompanyChange = (value) => { }, getID }) {
+function ModifyCompany({ visibleModifyCompany, onVisibleModifyCompanyChange = (value) => { }, getID,  refresh = () => {}} ) {
 
     const [ModifyCompanyData, setModifyCompanyData] = useState([{
         name: '',
@@ -32,6 +32,7 @@ function ModifyCompany({ visibleModifyCompany, onVisibleModifyCompanyChange = (v
                 if(result.status === 200){
                     message.success('Şirkət məlumatları yeniləndi');
                     onVisibleModifyCompanyChange(false);
+                    refresh();
                 }else if(result.status === 404){
                     message.error('Daxili xəta baş verdi')
                 }

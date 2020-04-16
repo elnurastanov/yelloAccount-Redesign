@@ -5,7 +5,7 @@ import { ShopOutlined, NodeExpandOutlined } from '@ant-design/icons'
 const { Text } = Typography
 
 
-function AddCompanyModal({visibleAddCompany, onVisibleAddCompanyChange = (value) => {}}) {
+function AddCompanyModal({visibleAddCompany, onVisibleAddCompanyChange = (value) => {}, refresh = () => {}}) {
     
     const [AddCompanyData, setAddCompanyData] = useState({
         companyName: '',
@@ -25,6 +25,7 @@ function AddCompanyModal({visibleAddCompany, onVisibleAddCompanyChange = (value)
                     message.success('Şirkət əlavə edildi');
                     onVisibleAddCompanyChange(false);
                     setAddCompanyData({...AddCompanyData,companyName:'', companyDirection:''});
+                    refresh()
                 }else if(result.status === 500){
                     message.error('Daxili xəta baş verdi')
                 }
