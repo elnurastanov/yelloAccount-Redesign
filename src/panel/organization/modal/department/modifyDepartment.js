@@ -17,14 +17,17 @@ function ModifyDeapartmentModal({ ModifyDepartmentVisible, onModifyDepartmentVis
     })
 
     useEffect(() => {
-        getDepartmentsByID(getID).then(
-            result => result.data.map(data => setModifyDepartmentData(data))
-        );
-        getCompanies().then(
-            result => setCompanyOption(result.data)
-        );
-        
-    }, [ModifyDepartmentVisible])
+
+        if (ModifyDepartmentVisible) {
+            getDepartmentsByID(getID).then(
+                result => result.data.map(data => setModifyDepartmentData(data))
+            );
+            getCompanies().then(
+                result => setCompanyOption(result.data)
+            );
+        }
+
+    }, [ModifyDepartmentVisible, getID])
 
     const sendData = () => {
         if (ModifyDepartmentData.company_id === '' || ModifyDepartmentData.name === '') {
@@ -37,11 +40,11 @@ function ModifyDeapartmentModal({ ModifyDepartmentVisible, onModifyDepartmentVis
                     company_id: ModifyDepartmentData.company_id
                 }
             ).then(result => {
-                if(result.status === 200){
+                if (result.status === 200) {
                     message.success('Departament məlumatları yeniləndi');
                     onModifyDepartmentVisibleChange(false);
                     refresh();
-                }else if(result.status === 404){
+                } else if (result.status === 404) {
                     message.error('Daxili xəta baş verdi')
                 }
             })
@@ -50,7 +53,7 @@ function ModifyDeapartmentModal({ ModifyDepartmentVisible, onModifyDepartmentVis
 
     return (
         <Modal
-            title="Departament əlavə et"
+            title="Departament məlumatlarını yenilə"
             visible={ModifyDepartmentVisible}
             onOk={sendData}
             onCancel={() => { onModifyDepartmentVisibleChange(false) }}
@@ -59,9 +62,9 @@ function ModifyDeapartmentModal({ ModifyDepartmentVisible, onModifyDepartmentVis
                 <Text strong>Şirkətin adı</Text>
                 <Select
                     style={{ width: 200 }}
-                    value={CompanyOption.companyID}
+                    value={ModifyDepartmentData.company_id}
                     onChange={(event) => setModifyDepartmentData({ ...ModifyDepartmentData, company_id: event })}
-                    
+
                 >
                     {
                         CompanyOption.map((data, index) => {
@@ -75,7 +78,7 @@ function ModifyDeapartmentModal({ ModifyDepartmentVisible, onModifyDepartmentVis
                 <Input placeholder="Departament"
                     prefix={<PartitionOutlined />}
                     value={ModifyDepartmentData.department_name}
-                    onChange={(event) => {setModifyDepartmentData({ ...ModifyDepartmentData, department_name: event.target.value })}}
+                    onChange={(event) => { setModifyDepartmentData({ ...ModifyDepartmentData, department_name: event.target.value }) }}
                 />
             </div>
         </Modal>

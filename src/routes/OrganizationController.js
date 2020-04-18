@@ -16,6 +16,18 @@ const getDepartmentsByID = (id) => {
     return Api.get(`organization/department/modal/${id}`).then(res => res)
 }
 
+const getPositions = () => {
+    return Api.get(`organization/position`).then(res => res)
+}
+
+const getPositionsByID = (id) => {
+    return Api.get(`organization/position/modal/${id}`).then(res => res)
+}
+
+const getOrganizationCounts = () => {
+    return Api.get(`organization/count`).then(res => res)
+}
+
 
 
 
@@ -30,7 +42,14 @@ const addDepartments = ({id, name}) => {
     return Api.post(`organization/department/modal`, {
         id: id,
         name: name
-    }). then(res => res)
+    }).then(res => res)
+}
+
+const addPositions = ({id, name}) => {
+    return Api.post(`organization/position/modal`, {
+        id: id,
+        name: name
+    }).then(res => res)
 }
 
 
@@ -50,6 +69,13 @@ const editDepartments = (id, {name, company_id}) => {
     }).then(res => res)
 }
 
+const editPositions = (id, {name, department_id}) => {
+    return Api.put(`organization/position/modal/${id}`, {
+        name: name,
+        department_id: department_id
+    }).then(res => res)
+}
+
 
 
 const deleteCompanies = (id) => {
@@ -60,15 +86,25 @@ const deleteDepartments = (id) => {
     return Api.delete(`organization/department/${id}`).then(res => res)
 }
 
+const deletePositions = (id) => {
+    return Api.delete(`organization/position/${id}`).then(res => res)
+}
+
 export {
     getCompanies,
     getCompaniesByID,
     getDepartments,
     getDepartmentsByID,
+    getPositions,
+    getPositionsByID,
+    getOrganizationCounts,
     addCompanies,
     addDepartments,
+    addPositions,
     editCompanies,
     editDepartments,
+    editPositions,
     deleteCompanies,
-    deleteDepartments
+    deleteDepartments,
+    deletePositions
 }

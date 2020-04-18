@@ -17,9 +17,13 @@ function AddDeapartmentModal({ AddDepartmentVisible, onAddDepartmentVisibleChang
     })
 
     useEffect(() => {
-        getCompanies().then(
-            result => setCompanyOption(result.data)
-        )
+        
+        if(AddDepartmentVisible){
+            getCompanies().then(
+                result => setCompanyOption(result.data)
+            )
+        }
+        
     }, [AddDepartmentVisible])
 
     const sendData = () => {

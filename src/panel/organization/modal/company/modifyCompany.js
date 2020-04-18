@@ -13,10 +13,14 @@ function ModifyCompany({ visibleModifyCompany, onVisibleModifyCompanyChange = (v
     }])
 
     useEffect(() => {
-        getCompaniesByID(getID).then(
-            res => res.data.map(data => setModifyCompanyData(data))
-        )
-    }, [visibleModifyCompany])
+        
+        if(visibleModifyCompany){
+            getCompaniesByID(getID).then(
+                res => res.data.map(data => setModifyCompanyData(data))
+            )
+        }
+        
+    }, [visibleModifyCompany,getID])
 
     const sendData = () => {
         if(ModifyCompanyData.name === '' || ModifyCompanyData.direction === ''){
