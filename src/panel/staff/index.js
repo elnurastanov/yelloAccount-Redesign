@@ -8,9 +8,9 @@ function Staff() {
 
     return (
         <section className="Staff">
-            <StaffForm/>
-            <Divider type="vertical" style={{ height: 'auto' }} />
             <StaffList/>
+            <Divider type="vertical" style={{ height: 'auto' }} />
+            <StaffForm/>
         </section >
     )
 }

@@ -16,12 +16,20 @@ const getDepartmentsByID = (id) => {
     return Api.get(`organization/department/modal/${id}`).then(res => res)
 }
 
+const getDepartmentsByCompanyID = (id) => {
+    return Api.get(`organization/department/${id}`).then(res => res)
+}
+
 const getPositions = () => {
     return Api.get(`organization/position`).then(res => res)
 }
 
 const getPositionsByID = (id) => {
     return Api.get(`organization/position/modal/${id}`).then(res => res)
+}
+
+const getPositionsByDepartmentID = (id) => {
+    return Api.get(`organization/position/${id}`).then(res => res)
 }
 
 const getOrganizationCounts = () => {
@@ -95,8 +103,10 @@ export {
     getCompaniesByID,
     getDepartments,
     getDepartmentsByID,
+    getDepartmentsByCompanyID,
     getPositions,
     getPositionsByID,
+    getPositionsByDepartmentID,
     getOrganizationCounts,
     addCompanies,
     addDepartments,

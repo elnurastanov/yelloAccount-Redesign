@@ -89,7 +89,12 @@ function Content() {
                         _getpositions(setpositionData);
                         _getorganizationCounts(setOrganizationCount)
                     }
-                })
+                }).catch(
+                    error => {
+                        console.log(`deletePosition Error => ${error}`);
+                        message.error('Xəta baş verdi')
+                    }
+                )
             },
             onCancel() { },
         });

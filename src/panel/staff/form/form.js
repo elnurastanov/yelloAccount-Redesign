@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { Form, Input, Select, DatePicker, Button } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { getCompanies, getDepartmentsByCompanyID, getPositionsByDepartmentID } from '../../../routes/OrganizationController'
+import { addStaff } from '../../../routes/StaffController'
+import { Form, Input, Select, DatePicker, Button, message } from 'antd'
 import {
     UserOutlined,
     IdcardOutlined,
@@ -19,10 +21,67 @@ const layout = {
 };
 
 function StaffFrom() {
-    
+
+    // Select Component
+    const { Option } = Select;
+    const [CompanyOption, setCompanyOption] = useState([])
+    const [DepartmentOption, setDepartmentOption] = useState([])
+    const [PositionOption, setPositionOption] = useState([])
+    const [DropdownData, setDropdownData] = useState({
+        company_id: undefined,
+        department_id: undefined,
+        position_id: undefined
+    })
+
+    useEffect(() => {
+        getCompanies().then(
+            result => setCompanyOption(result.data)
+        ).catch(
+            error => {
+                console.log(`getCompany error => ${error}`);
+                message.error('Xəta baş verdi')
+            }
+        )
+    }, [])
+
+    useEffect(() => {
+        if (DropdownData.company_id) {
+            getDepartmentsByCompanyID(DropdownData.company_id).then(
+                result => {
+                    setDepartmentOption(result.data)
+                }
+            ).catch(
+                error => {
+                    console.log(`getDepartment error => ${error}`);
+                    message.error('Xəta baş verdi')
+                }
+            ).finally(
+                () => { 
+                    setDropdownData((DropdownData) => { return { ...DropdownData, department_id: undefined } });
+                    setDropdownData((DropdownData) => { return { ...DropdownData, position_id: undefined } })
+                }
+            )
+        }
+    }, [DropdownData.company_id])
+
+    useEffect(() => {
+        if (DropdownData.department_id) {
+            getPositionsByDepartmentID(DropdownData.department_id).then(
+                result => setPositionOption(result.data)
+            ).catch(
+                error => {
+                    console.log(`getPosition error => ${error}`);
+                    message.error('Xəta baş verdi')
+                }
+            ).finally(
+                () => { setDropdownData((DropdownData) => { return { ...DropdownData, position_id: undefined } }) }
+            )
+        }
+    }, [DropdownData.department_id])
+
     //Staff Form
     const [form] = Form.useForm();
-    const [staffState, setStaffState] = useState({})
+
     useEffect(() => {
         form.setFieldsValue({
             staffName: undefined,
@@ -37,37 +96,42 @@ function StaffFrom() {
             staffDepartment: undefined,
             staffPosition: undefined,
             staffStartDate: undefined,
-            staffNote: undefined
+            staffNote: null
         });
     }, [form])
 
     function onFinish(event) {
-        setStaffState({
-            ...staffState,
-            staffName: event.staffName,
-            staffSurname: event.staffSurname,
-            staffPatronymic: event.staffPatronymic,
-            staffIDSerial: event.staffIDSerial,
-            staffIDFin: event.staffIDFin,
-            staffAdress: event.staffAdress,
-            staffPhone: event.staffPhone,
-            staffEmail: event.staffEmail,
-            staffCompany: event.staffCompany,
-            staffDepartment: event.staffDepartment,
-            staffPosition: event.staffPosition,
-            staffStartDate: event.staffStartDate,
-            staffNote: event.staffNote
-        }) 
+        addStaff({
+            position_id: DropdownData.position_id,
+            first_name: event.staffName,
+            last_name: event.staffSurname,
+            patronymic: event.staffPatronymic,
+            id_card: event.staffIDSerial,
+            id_FIN: event.staffIDFin,
+            adress: event.staffAdress,
+            join_date: event.staffStartDate,
+            private_phone: event.staffPhone,
+            private_email: event.staffEmail,
+            note: event.staffNote
+        }).then(
+            result => {
+                if(result.status === 201){
+                    message.success('Əməkdaş uğurla əlavə edildi');
+                    ResetForm();
+                }
+            }
+        ).catch(
+            error => {
+                message.error('Xəta baş verdi');
+                console.log(`addStaff Error => ${error}`)
+            }
+        )
     }
 
     function ResetForm() {
-        form.resetFields()
+        form.resetFields();
+        setDropdownData({company_id: undefined, department_id: undefined, position_id: undefined})
     }
-
-    // Select Component
-    const options = [{ value: "Yello" }, { value: "YelloAD" }]
-    const options1 = [{ value: "test" }, { value: 'test2' }]
-    const { Option } = Select;
 
     return (
         <Form form={form} {...layout} name="Salary__form" onFinish={onFinish} layout='vertical' size='small' >
@@ -142,40 +206,57 @@ function StaffFrom() {
                 </Form.Item>
 
             </div>
-            <div className="Form__customLayout">
+            <div className="Form__customLayout_select">
 
-                <Form.Item name="staffCompany" label="Şirkət"
-                    rules={[{ required: true, message: 'Şirkət seçin' }]} >
-                    <Select placeholder='YelloAD' style={{ width: 200 }} >
+                <div className="customLayout__select">
+                    <label className="select_label">Şirkət</label>
+                    <Select
+                        placeholder='YelloAD'
+                        style={{ width: 200 }}
+                        value={DropdownData.company_id}
+                        onChange={(event) => setDropdownData({ ...DropdownData, company_id: event })}
+                    >
                         {
-                            options.map((data, index) => {
-                                return <Option key={index} value={data.value}>{data.value}</Option>
+                            CompanyOption.map((data) => {
+                                return <Option key={data.id} value={data.id}>{data.name}</Option>
                             })
                         }
                     </Select>
-                </Form.Item>
+                </div>
 
-                <Form.Item name="staffDepartment" label="Departament"
-                    rules={[{ required: true, message: 'Departament seçin' }]} >
-                    <Select placeholder='Administrasiya' style={{ width: 200 }} >
+
+
+                <div className="customLayout__select">
+                    <label className="select_label">Departament</label>
+                    <Select
+                        placeholder='Administrasiya'
+                        style={{ width: 200 }}
+                        value={DropdownData.department_id}
+                        onChange={(event) => setDropdownData({ ...DropdownData, department_id: event })}
+                    >
                         {
-                            options1.map((data, index) => {
-                                return <Option key={index} value={data.value}>{data.value}</Option>
+                            DepartmentOption.map((data) => {
+                                return <Option key={data.id} value={data.id}>{data.name}</Option>
                             })
                         }
                     </Select>
-                </Form.Item>
+                </div>
 
-                <Form.Item name="staffPosition" label="Vəzifə"
-                    rules={[{ required: true, message: 'Vəzifə seçin' }]} >
-                    <Select placeholder='Direktor' style={{ width: 200 }} >
+                <div className="customLayout__select">
+                    <label className="select_label">Vəzifə</label>
+                    <Select
+                        placeholder='Direktor'
+                        style={{ width: 200 }}
+                        value={DropdownData.position_id}
+                        onChange={(event) => setDropdownData({ ...DropdownData, position_id: event })}
+                    >
                         {
-                            options1.map((data, index) => {
-                                return <Option key={index} value={data.value}>{data.value}</Option>
+                            PositionOption.map((data) => {
+                                return <Option key={data.id} value={data.id}>{data.name}</Option>
                             })
                         }
                     </Select>
-                </Form.Item>
+                </div>
 
             </div>
             <div className="Form__customLayout">

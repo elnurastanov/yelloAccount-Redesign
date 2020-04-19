@@ -43,3 +43,20 @@
 .modalContent:not(:first-child){
     margin-top: 1rem;
 }
+
+.Form__customLayout_select{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    width: 70rem;
+}
+
+.customLayout__select{
+    display: flex;
+    flex-direction: column;
+    height: 8rem;
+}
+
+.select_label{
+    margin-bottom: 1rem;
+}
