@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
-import { Input, Select, DatePicker, Button, Modal, Popconfirm, message } from 'antd'
-import moment from 'moment'
+import React, { useState, useEffect } from 'react'
+import { getCompanies, getDepartmentsByCompanyID, getPositionsByDepartmentID } from '../../../routes/OrganizationController'
+import { getStaffById, editStaff } from '../../../routes/StaffController'
+import { Input, Select, Button, Modal, message } from 'antd'
 import {
     UserOutlined,
     IdcardOutlined,
@@ -11,60 +12,196 @@ import {
     HistoryOutlined,
     CreditCardOutlined,
     BankOutlined,
-    WalletOutlined
+    WalletOutlined,
+    CalendarOutlined
 } from '@ant-design/icons'
 
-function StaffModal({ visible, onVisibleChange = (value) =>{} }) {
+function StaffModal({ visible, onVisibleChange = (value) => { }, getID, refresh = () => { } }) {
 
-    const options = [{ value: "Yello" }, { value: "YelloAD" }]
-    const options1 = [{ value: "test" }, { value: 'test2' }]
     const { Option } = Select;
-
-    const confirm = () => {
-        message.success('Əmakdaş işdən azad edildi')
-    }
+    const [SelectOption, setSelectOption] = useState({
+        companyOption: [],
+        departmentOption: [],
+        positionOption: []
+    })
 
     const [modalData, setModalData] = useState({
-        name: 'Elnur',
-        surname: 'Astanov',
-        patronymic: 'Aslan',
-        IDSerial: 'AZE 13553101',
-        IDFIN: '63JA0NX',
-        adress: 'Gence PR. 44',
-        phone: '+994 51 964 68 75',
-        email: 'elnurastanov@hotmail.com',
-        startDate: moment('12-02-2020', 'DD-MM-YYYY'),
-        serviceDate: `2 il 3 ay 17 gün`,
-        company: '',
-        department: '',
-        position: '',
-        workPhone: '',
-        workEmail: '',
-        salaryCard: '',
-        socialCard: '',
-        salary: '',
-        note: 'Qeyd...'
+        name: undefined,
+        surname: undefined,
+        patronymic: undefined,
+        IDSerial: undefined,
+        IDFIN: undefined,
+        adress: undefined,
+        phone: undefined,
+        email: undefined,
+        startDate: undefined,
+        serviceDate: undefined,
+        company: undefined,
+        department: undefined,
+        position: undefined,
+        workPhone: undefined,
+        workEmail: undefined,
+        salaryCard: undefined,
+        socialCard: undefined,
+        salary: undefined,
+        note: 'Qeyd...',
+        defaultCompany: undefined,
+        defaultDepartment: undefined
 
     })
 
-    const test = () => {console.log(modalData)}
+    useEffect(() => {
+        if (visible) {
+            getStaffById(getID).then(
+                result => {
+                    setModalData((modalData) => {
+                        return {
+                            ...modalData,
+                            name: result.data.first_name,
+                            surname: result.data.last_name,
+                            patronymic: result.data.patronymic,
+                            IDSerial: result.data.id_card,
+                            IDFIN: result.data.id_FIN,
+                            adress: result.data.adress,
+                            phone: result.data.private_phone,
+                            email: result.data.private_email,
+                            startDate: result.data.join_date,
+                            serviceDate: result.data.experience,
+                            company: result.data.company_id,
+                            department: result.data.department_id,
+                            position: result.data.position_id,
+                            note: result.data.note,
+                            defaultCompany: result.data.company_id,
+                            defaultDepartment: result.data.department_id
+                        }
+                    })
+                }
+            ).catch(
+                error => {
+                    console.log(`getStaffById Error => ${error}`);
+                    message.error('Xəta baş verdi')
+                }
+            )
+        }
+    }, [visible, getID])
+
+    useEffect(() => {
+
+        getCompanies().then(
+            result => setSelectOption((SelectOption) => {
+                return {
+                    ...SelectOption,
+                    companyOption: result.data
+                }
+            })
+        ).catch(
+            error => {
+                console.log(`getCompany Error => ${error}`);
+                message.error('Xəta baş verdi')
+            }
+        )
+
+    }, [])
+
+    useEffect(() => {
+        if (modalData.company) {
+            getDepartmentsByCompanyID(modalData.company).then(
+                result => setSelectOption((SelectOption) => {
+                    return {
+                        ...SelectOption,
+                        departmentOption: result.data
+                    }
+                })
+            ).catch(
+                error => {
+                    console.log(`getDepartmentsByCompanyId Error => ${error}`);
+                    message.error('Xəta baş verdi')
+                }
+            ).finally(
+                () => {
+                    if (modalData.company !== modalData.defaultCompany) {
+                        setModalData((modalData) => { return { ...modalData, department: undefined } });
+                        setModalData((modalData) => { return { ...modalData, position: undefined } });
+                        setModalData((modalData) => { return { ...modalData, defaultCompany: modalData.company } });
+                        setSelectOption((SelectOption) => { return { ...SelectOption, positionOption: [] } });
+                    }
+                }
+            )
+        }
+    }, [modalData.company, modalData.defaultCompany])
+
+    useEffect(() => {
+        if (modalData.department) {
+            getPositionsByDepartmentID(modalData.department).then(
+                result => setSelectOption((SelectOption) => {
+                    return {
+                        ...SelectOption,
+                        positionOption: result.data
+                    }
+                })
+            ).catch(
+                error => {
+                    console.log(`getPositionByDepartmentId Error => ${error}`);
+                    message.error('Xəta baş verdi')
+                }
+            ).finally(
+                () => {
+                    if (modalData.department !== modalData.defaultDepartment) {
+                        setModalData((modalData) => { return { ...modalData, position: undefined } });
+                        setModalData((modalData) => { return { ...modalData, defaultDepartment: modalData.department } });
+
+                    }
+                }
+            )
+        }
+    }, [modalData.department, modalData.defaultDepartment])
+
+    function sendData(id) {
+        if (modalData.name === '' || modalData.surname === '' || modalData.patronymic === '' || modalData.IDSerial === '' || modalData.IDFIN === '' || modalData.adress === '' || modalData.phone === '' || modalData.email === '') {
+            message.warning('Əməkdaş haqqında ilkin məlumatlar boş ola bilməz');
+        } else {
+            editStaff(id, {
+                position_id: modalData.position,
+                first_name: modalData.name,
+                last_name: modalData.surname,
+                patronymic: modalData.patronymic,
+                id_card: modalData.IDSerial,
+                id_FIN: modalData.IDFIN,
+                adress: modalData.adress,
+                private_phone: modalData.phone,
+                private_email: modalData.email,
+                work_phone: modalData.workPhone,
+                work_email: modalData.workEmail,
+                salary_card: modalData.salaryCard,
+                social_insurance: modalData.socialCard,
+                salary: modalData.salary,
+                note: modalData.note
+            }).then(
+                result => {
+                    if(result.status === 200){
+                        message.success('Əməkdaş haqqında məlumatlar yeniləndi');
+                        onVisibleChange(false);
+                        refresh();
+                    }
+                }
+            ).catch(
+                error => {
+                    console.log(`editStaff Error => ${error}`);
+                    message.error('Xəta baş verdi');
+                }
+            )
+        }
+
+    }
 
     return (
         <Modal
             visible={visible}
             title="İşçinin adı"
-            onCancel={ () => onVisibleChange(false)}
+            onCancel={() => onVisibleChange(false)}
             footer={[
-                <Popconfirm
-                    title="Əməkdaşı işdən azad etməyə əminsizniz?"
-                    onConfirm={confirm}
-                    okText="Bəli"
-                    cancelText="Xeyr"
-                    key="12314"
-                >
-                    <Button type="primary" danger >Işdən azad et</Button>
-                </Popconfirm>,
-                <Button type="primary" key="12374" onClick={test} >Məlumatları yenilə</Button>,
+                <Button key="1237" onClick={() => onVisibleChange(false)} >Bağla</Button>,
+                <Button type="primary" key="12374" onClick={() => sendData(getID)} >Məlumatları yenilə</Button>
             ]}
         >
             <div className="modalContent">
@@ -78,13 +215,13 @@ function StaffModal({ visible, onVisibleChange = (value) =>{} }) {
                     prefix={<UserOutlined />}
                     style={{ width: 150 }}
                     value={modalData.surname}
-                    onChange={(event) => { setModalData({ ...modalData, name: event.target.value }) }}
+                    onChange={(event) => { setModalData({ ...modalData, surname: event.target.value }) }}
                     size='small' />
                 <Input
                     prefix={<UserOutlined />}
                     style={{ width: 150 }}
                     value={modalData.patronymic}
-                    onChange={(event) => { setModalData({ ...modalData, name: event.target.value }) }}
+                    onChange={(event) => { setModalData({ ...modalData, patronymic: event.target.value }) }}
                     size='small' />
             </div>
             <div className="modalContent">
@@ -92,19 +229,19 @@ function StaffModal({ visible, onVisibleChange = (value) =>{} }) {
                     prefix={<IdcardOutlined />}
                     style={{ width: 150 }}
                     value={modalData.IDSerial}
-                    onChange={(event) => { setModalData({ ...modalData, name: event.target.value }) }}
+                    onChange={(event) => { setModalData({ ...modalData, IDSerial: event.target.value }) }}
                     size='small' />
                 <Input
                     prefix={<IdcardOutlined />}
                     style={{ width: 150 }}
                     value={modalData.IDFIN}
-                    onChange={(event) => { setModalData({ ...modalData, name: event.target.value }) }}
+                    onChange={(event) => { setModalData({ ...modalData, IDFIN: event.target.value }) }}
                     size='small' />
                 <Input
                     prefix={<HomeOutlined />}
                     style={{ width: 150 }}
                     value={modalData.adress}
-                    onChange={(event) => { setModalData({ ...modalData, name: event.target.value }) }}
+                    onChange={(event) => { setModalData({ ...modalData, adress: event.target.value }) }}
                     size='small' />
             </div>
             <div className="modalContent">
@@ -112,20 +249,21 @@ function StaffModal({ visible, onVisibleChange = (value) =>{} }) {
                     prefix={<PhoneOutlined />}
                     style={{ width: 230 }}
                     value={modalData.phone}
-                    onChange={(event) => { setModalData({ ...modalData, name: event.target.value }) }}
+                    onChange={(event) => { setModalData({ ...modalData, phone: event.target.value }) }}
                     size='small' />
                 <Input
                     prefix={<MailOutlined />}
                     style={{ width: 230 }}
                     value={modalData.email}
-                    onChange={(event) => { setModalData({ ...modalData, name: event.target.value }) }}
+                    onChange={(event) => { setModalData({ ...modalData, email: event.target.value }) }}
                     size='small' />
             </div>
             <div className="modalContent">
-                <DatePicker
-                    defaultValue={modalData.startDate}
-                    format={'DD-MM-YYYY'}
+                <Input
+                    prefix={<CalendarOutlined />}
                     style={{ width: 230 }}
+                    value={modalData.startDate}
+                    disabled={true}
                     size='small'
                 />
                 <Input
@@ -138,24 +276,36 @@ function StaffModal({ visible, onVisibleChange = (value) =>{} }) {
 
             </div>
             <div className="modalContent">
-                <Select placeholder='YelloAD' style={{ width: 150 }} size='small' onChange={(data) => {setModalData({...modalData, company:data})}}>
+                <Select
+                    style={{ width: 150 }}
+                    size='small'
+                    value={modalData.company}
+                    onChange={(data) => { setModalData({ ...modalData, company: data }) }}>
                     {
-                        options.map((data, index) => {
-                            return <Option key={index} value={data.value}>{data.value}</Option>
+                        SelectOption.companyOption.map((value) => {
+                            return <Option key={value.id} value={value.id}>{value.name}</Option>
                         })
                     }
                 </Select>
-                <Select placeholder='Administrasiya' style={{ width: 150 }} size='small' onChange={(data) => {setModalData({...modalData, department:data})}}>
+                <Select
+                    style={{ width: 150 }}
+                    size='small'
+                    value={modalData.department}
+                    onChange={(data) => { setModalData({ ...modalData, department: data }) }}>
                     {
-                        options1.map((data, index) => {
-                            return <Option key={index} value={data.value}>{data.value}</Option>
+                        SelectOption.departmentOption.map((value) => {
+                            return <Option key={value.id} value={value.id}>{value.name}</Option>
                         })
                     }
                 </Select>
-                <Select placeholder='Direktor' style={{ width: 150 }} size='small' onChange={(data) => {setModalData({...modalData, position:data})}}>
+                <Select
+                    style={{ width: 150 }}
+                    size='small'
+                    value={modalData.position}
+                    onChange={(data) => { setModalData({ ...modalData, position: data }) }}>
                     {
-                        options1.map((data, index) => {
-                            return <Option key={index} value={data.value}>{data.value}</Option>
+                        SelectOption.positionOption.map((value) => {
+                            return <Option key={value.id} value={value.id}>{value.name}</Option>
                         })
                     }
                 </Select>

@@ -20,7 +20,7 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
-function StaffFrom() {
+function StaffFrom({onChangeRelaod = () => {}}) {
 
     // Select Component
     const { Option } = Select;
@@ -118,6 +118,7 @@ function StaffFrom() {
                 if(result.status === 201){
                     message.success('Əməkdaş uğurla əlavə edildi');
                     ResetForm();
+                    onChangeRelaod(true);
                 }
             }
         ).catch(

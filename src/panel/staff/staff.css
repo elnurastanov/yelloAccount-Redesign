@@ -60,3 +60,8 @@
 .select_label{
     margin-bottom: 1rem;
 }
+
+.List--actions:hover{
+    color: dodgerblue;
+    margin: 0;
+}

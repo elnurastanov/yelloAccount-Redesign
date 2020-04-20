@@ -240,7 +240,7 @@ function Content() {
                     <Descriptions.Item label="Şirkət sayı">{OrganizationCount.company_count && OrganizationCount.company_count}</Descriptions.Item>
                     <Descriptions.Item label="Departament sayı">{OrganizationCount.department_count && OrganizationCount.department_count}</Descriptions.Item>
                     <Descriptions.Item label="Vəzifə sayı">{OrganizationCount.position_count && OrganizationCount.position_count}</Descriptions.Item>
-                    <Descriptions.Item label="Ümumi işçi sayı">empty</Descriptions.Item>
+                <Descriptions.Item label="Ümumi işçi sayı">{OrganizationCount.staff_count && OrganizationCount.staff_count}</Descriptions.Item>
                 </Descriptions>,
             </div>
 
