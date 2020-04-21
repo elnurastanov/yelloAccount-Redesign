@@ -13,13 +13,16 @@ import {
   UploadOutlined,
   ContactsOutlined,
   TeamOutlined,
-  BankOutlined
+  BankOutlined,
+  UserSwitchOutlined
 } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
 const Organization = React.lazy(() => import('./panel/organization'));
 const Salary = React.lazy(() => import('./panel/salary'));
 const Staff = React.lazy(() => import('./panel/staff'));
+const Contact = React.lazy(() => import('./panel/contact'))
+
 
 function App() {
 
@@ -85,11 +88,16 @@ function App() {
               <span>Kadrlar</span>
             </Menu.Item>
             <Menu.Item key="11" style={{ height: "3rem", lineHeight: "3rem" }}>
+              <Link to="/Contact"></Link>
+              <UserSwitchOutlined />
+              <span>Kontakt</span>
+            </Menu.Item>
+            <Menu.Item key="12" style={{ height: "3rem", lineHeight: "3rem" }}>
               <Link to="/Monitor"></Link>
               <UploadOutlined />
               <span>Monitor</span>
             </Menu.Item>
-            <Menu.Item key="12" style={{ height: "3rem", lineHeight: "3rem" }}>
+            <Menu.Item key="13" style={{ height: "3rem", lineHeight: "3rem" }}>
               <Link to="/Leader"></Link>
               <UploadOutlined />
               <span>Rəhbər üçün</span>
@@ -123,6 +131,7 @@ function App() {
                 <Route exact path="/QMA" component={() => <h1>QMA</h1>} />
                 <Route exact path="/Salary" component={Salary} />
                 <Route exact path="/Staff" component={Staff} />
+                <Route path="/Contact" component={Contact} />
                 <Route exact path="/Monitor" component={() => <h1>Monitor</h1>} />
                 <Route exact path="/Leader" component={() => <h1>Leader</h1>} />
               </Switch>
