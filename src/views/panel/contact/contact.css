@@ -1,0 +1,77 @@
+.Contact{
+    height: 75vh;
+}
+
+.Contact__content{
+    margin-top: 2rem;
+}
+
+.AddContactModal__label{
+    margin-top: 1rem;
+    margin-bottom: 0.7rem;
+}
+
+.ContactInfo{
+    display: flex;
+    height: 96%;
+}
+
+.ContactInfo__main{
+    padding: 1rem;
+    box-sizing: border-box;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    text-align: center;
+}
+
+.ContactInfo__name{
+    font-size: large;
+    font-weight: 700;
+}
+
+.ContactInfo__component{
+    margin-top: 3rem;
+    display: flex;
+    align-items: center;
+}
+
+.ContactInfo__component--input{
+    border-top-style: hidden;
+    border-left-style: hidden;
+    border-right-style: hidden;
+    text-align: center;
+}
+
+.ant-select-single:not(.ant-select-customize-input) .ant-select-selector{
+    border-radius: 0;
+    border-top-style: hidden;
+    border-left-style: hidden;
+    border-right-style: hidden;
+}
+
+
+.ContactInfo__timeline{
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    width: 50%;
+}
+
+/* .ant-timeline.ant-timeline-label .ant-timeline-item-label{
+    width: calc(26% - 12px);
+}
+
+.ant-timeline.ant-timeline-label .ant-timeline-item-tail, .ant-timeline.ant-timeline-label .ant-timeline-item-head{
+    left: 26%;
+}
+
+.ant-timeline.ant-timeline-alternate .ant-timeline-item-left .ant-timeline-item-content, .ant-timeline.ant-timeline-right .ant-timeline-item-left .ant-timeline-item-content, .ant-timeline.ant-timeline-label .ant-timeline-item-left .ant-timeline-item-content {
+    left: calc(25% - 4px);
+    width: calc(50% + 108px);
+} */
+

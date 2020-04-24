@@ -1,0 +1,18 @@
+@import "~antd/dist/antd.css";
+
+.Login__layout,
+.Login__layout .Login__layout__content {
+    background: #fff;
+}
+
+.Login__layout__content {
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.layout__content{
+    margin-top: 2rem;
+}
