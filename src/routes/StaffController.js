@@ -8,6 +8,10 @@ const getStaffById = (id) => {
     return Api.get(`staff/modal/${id}`).then(res => res)
 }
 
+const getStaffByFIN = (id) => {
+    return Api.get(`staff/${id}`).then(res => res)
+}
+
 
 
 const addStaff = ({
@@ -86,6 +90,7 @@ const deleteStaff = (id) => {
 export {
     getStaff,
     getStaffById,
+    getStaffByFIN,
     addStaff,
     editStaff,
     deleteStaff,

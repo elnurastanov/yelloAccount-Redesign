@@ -18,20 +18,20 @@ const _getStaff = (setState) => {
     )
 }
 
-function StaffLIst({reload}) {
+function StaffLIst({ reload }) {
 
-    
+
     //Staff modal
     const [visible, setVisible] = useState(false)
     const [idForModal, setidForModal] = useState(undefined)
     const [ListData, setListData] = useState([])
 
     useEffect(() => {
-        if(reload){
+        if (reload) {
             _getStaff(setListData)
         }
     }, [reload])
-    
+
 
     useEffect(() => {
         getStaff().then(
@@ -48,26 +48,26 @@ function StaffLIst({reload}) {
 
     function showConfirm(id) {
         confirm({
-          title: 'Əmakdaşı azad etməyə əminsiniz?',
-          icon: <ExclamationCircleOutlined />,
-          onOk() {
-            deleteStaff(id).then(
-                result => {
-                    if(result.status === 200){
-                        message.success('Əməkdaş işdən azad edildi');
-                        _getStaff(setListData)
+            title: 'Əmakdaşı azad etməyə əminsiniz?',
+            icon: <ExclamationCircleOutlined />,
+            onOk() {
+                deleteStaff(id).then(
+                    result => {
+                        if (result.status === 200) {
+                            message.success('Əməkdaş işdən azad edildi');
+                            _getStaff(setListData)
+                        }
                     }
-                }
-            ).catch(
-                error => {
-                    console.log(`deleteStaff Error => ${error}`);
-                    message.error('Xəta baş verdi')
-                }
-            )
-          },
-          onCancel() {},
+                ).catch(
+                    error => {
+                        console.log(`deleteStaff Error => ${error}`);
+                        message.error('Xəta baş verdi')
+                    }
+                )
+            },
+            onCancel() { },
         });
-      }
+    }
 
     return (
         <section className="StaffList">
@@ -90,17 +90,17 @@ function StaffLIst({reload}) {
                         actions={
                             [
                                 <span
-                                    className="List--actions"
+                                    style={{ color: '#0466c8' }}
                                     key="list-loadmore-edit"
                                     onClick={() => {
                                         setVisible(true);
                                         setidForModal(item.id)
                                     }}
                                 >Düzəliş et</span>,
-                                <span 
-                                className="List--actions" 
-                                key="list-loadmore-more"
-                                onClick={() => showConfirm(item.id)}
+                                <span
+                                    style={{ color: '#d62828' }}
+                                    key="list-loadmore-more"
+                                    onClick={() => showConfirm(item.id)}
                                 >İşdən azad et</span>
                             ]
                         }

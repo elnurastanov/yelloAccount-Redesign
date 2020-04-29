@@ -1,11 +1,13 @@
-import React, { useState, Suspense } from 'react';
+import React, { useState, Suspense, useEffect } from 'react';
 import './main.css'
 import {
   Switch,
   Route,
-  Link
+  Link,
+  Redirect
 } from "react-router-dom";
-import { Layout, Menu, Spin } from 'antd';
+import appConfig from '../../../config/appconfig'
+import { Layout, Menu, Spin, Dropdown } from 'antd';
 import {
   MenuUnfoldOutlined,
   MenuFoldOutlined,
@@ -14,7 +16,10 @@ import {
   ContactsOutlined,
   TeamOutlined,
   BankOutlined,
-  UserSwitchOutlined
+  UserSwitchOutlined,
+  DownOutlined,
+  LogoutOutlined,
+  PartitionOutlined
 } from '@ant-design/icons';
 
 const { Header, Sider, Content } = Layout;
@@ -22,14 +27,25 @@ const Organization = React.lazy(() => import('../../panel/organization'));
 const Salary = React.lazy(() => import('../../panel/salary'));
 const Staff = React.lazy(() => import('../../panel/staff'));
 const Contact = React.lazy(() => import('../../panel/contact'))
+const Users = React.lazy(() => import('../../panel/users'))
+
 
 
 function Main() {
 
   const [collapsed, setCollapsed] = useState(true)
+  const [Userdata, setUserdata] = useState(undefined)
+  
   function toggle() {
     setCollapsed(!collapsed)
   }
+  
+
+  useEffect(() => {
+
+    setUserdata(JSON.parse(window.sessionStorage.getItem(appConfig.sessionStorage)).staff)
+
+  }, [])
 
   return (
     <div className="App">
@@ -102,14 +118,53 @@ function Main() {
               <UploadOutlined />
               <span>Rəhbər üçün</span>
             </Menu.Item>
+            <Menu.Item key="14" style={{ height: "3rem", lineHeight: "3rem" }}>
+              <Link to="/Users"></Link>
+              <PartitionOutlined />
+              <span>İstifadəçilər</span>
+            </Menu.Item>
           </Menu>
         </Sider>
         <Layout className="site-layout">
-          <Header className="site-layout-background" style={{ padding: 0 }}>
+          <Header
+            className="site-layout-background"
+            style={{ padding: 0, display: 'flex', justifyContent: 'space-between' }}
+          >
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
               onClick: toggle,
             })}
+            <Dropdown
+              placement='bottomCenter'
+              trigger='click'
+              overlay={
+                <Menu>
+                  <Menu.Item
+                    onClick={() => {
+
+                      window.location.href = '/';
+                      window.sessionStorage.removeItem(appConfig.sessionStorage)
+
+                    }}>
+                    <span >
+
+                      <LogoutOutlined />&nbsp;Çıxış
+
+                  </span>
+                  </Menu.Item>
+                </Menu>
+              }
+            >
+              <span
+                className="ant-dropdown-link"
+                onClick={e => e.preventDefault()}
+                style={{ fontWeight: 500, cursor: 'pointer', paddingRight: 24 }}
+              >
+
+                {Userdata} <DownOutlined />
+
+              </span>
+            </Dropdown>
           </Header>
           <Content
             className="site-layout-background"
@@ -119,9 +174,11 @@ function Main() {
               minHeight: 280
             }}
           >
-            <Suspense fallback={<Spin style={{marginLeft:'50%', marginTop: '25%'}} size="large" />}>
+            <Suspense fallback={<Spin style={{ marginLeft: '50%', marginTop: '25%' }} size="large" />}>
               <Switch>
-                <Route exact path="/" component={() => <h1>Dashboard</h1>} />
+                <Redirect exact from='/' to='/Dashboard' />
+
+                <Route exact path="/Dashboard" component={() => <h1>Dashboard</h1>} />
                 <Route exact path="/Organization" component={Organization} />
                 <Route exact path="/Bank" component={() => <h1>Bank</h1>} />
                 <Route exact path="/Treasure" component={() => <h1>Treasure</h1>} />
@@ -134,6 +191,9 @@ function Main() {
                 <Route path="/Contact" component={Contact} />
                 <Route exact path="/Monitor" component={() => <h1>Monitor</h1>} />
                 <Route exact path="/Leader" component={() => <h1>Leader</h1>} />
+                <Route exact path="/Users" component={Users} />
+
+                <Redirect from='*' to='/404' />
               </Switch>
             </Suspense>
           </Content>

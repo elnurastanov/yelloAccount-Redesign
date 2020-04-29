@@ -122,7 +122,7 @@ function Content() {
                                 key={index}
                                 actions={
                                     [<p
-                                        className="list--actions"
+                                        style={{ color: '#0466c8' }}
                                         key="list-edit"
                                         onClick={() => {
                                             setIdForModal(item.id);
@@ -131,7 +131,7 @@ function Content() {
                                     >Edit</p>,
 
                                     <p
-                                        className="list--actions"
+                                        style={{ color: '#d62828' }}
                                         key="list-remove"
                                         onClick={() => showDepartmentDeleteConfirm(item.id)}
                                     >Remove</p>]
@@ -154,17 +154,17 @@ function Content() {
                     AddDepartmentVisible={ContentModalVisible.addDepartment}
                     onAddDepartmentVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, addDepartment: value })}
                     refresh={() => {
-                         _getdepartments(setdepartmentData);
-                         _getorganizationCounts(setOrganizationCount) 
-                        }}
+                        _getdepartments(setdepartmentData);
+                        _getorganizationCounts(setOrganizationCount)
+                    }}
                 />
 
                 <ModifyDeapartmentModal
                     ModifyDepartmentVisible={ContentModalVisible.modifyDepartment}
                     onModifyDepartmentVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, modifyDepartment: value })}
                     getID={IdForModal}
-                    refresh={() => { 
-                        _getdepartments(setdepartmentData); 
+                    refresh={() => {
+                        _getdepartments(setdepartmentData);
                         _getorganizationCounts(setOrganizationCount)
                     }}
                 />
@@ -189,7 +189,7 @@ function Content() {
                                 key={item.id}
                                 actions={
                                     [<p
-                                        className="list--actions"
+                                        style={{ color: '#0466c8' }}
                                         key="list-edit"
                                         onClick={() => {
                                             setIdForModal(item.id);
@@ -198,7 +198,7 @@ function Content() {
                                     >Edit</p>,
 
                                     <p
-                                        className="list--actions"
+                                        style={{ color: '#d62828' }}
                                         key="list-remove"
                                         onClick={() => showPositionDeleteConfirm(item.id)}
                                     >Remove</p>]
@@ -218,7 +218,7 @@ function Content() {
                     AddPositionVisible={ContentModalVisible.addPosition}
                     onAddPositionVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, addPosition: value })}
                     refresh={() => {
-                        _getpositions(setpositionData); 
+                        _getpositions(setpositionData);
                         _getorganizationCounts(setOrganizationCount)
                     }}
                 />
@@ -227,7 +227,7 @@ function Content() {
                     ModifyPositionVisible={ContentModalVisible.modifyPosition}
                     onModifyPositionVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, modifyPosition: value })}
                     refresh={() => {
-                        _getpositions(setpositionData); 
+                        _getpositions(setpositionData);
                         _getorganizationCounts(setOrganizationCount)
                     }}
                     getID={IdForModal}
@@ -240,7 +240,7 @@ function Content() {
                     <Descriptions.Item label="Şirkət sayı">{OrganizationCount.company_count && OrganizationCount.company_count}</Descriptions.Item>
                     <Descriptions.Item label="Departament sayı">{OrganizationCount.department_count && OrganizationCount.department_count}</Descriptions.Item>
                     <Descriptions.Item label="Vəzifə sayı">{OrganizationCount.position_count && OrganizationCount.position_count}</Descriptions.Item>
-                <Descriptions.Item label="Ümumi işçi sayı">{OrganizationCount.staff_count && OrganizationCount.staff_count}</Descriptions.Item>
+                    <Descriptions.Item label="Ümumi işçi sayı">{OrganizationCount.staff_count && OrganizationCount.staff_count}</Descriptions.Item>
                 </Descriptions>,
             </div>
 

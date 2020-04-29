@@ -16,12 +16,12 @@ const Contact = () => {
     const [ModalVisible, setModalVisible] = useState(false)
     const [DummyData, setDummyData] = useState([])
 
-    for(let i=0; i<50; i++){
+    for (let i = 0; i < 50; i++) {
         DummyData.push({
             name: `name ${i}`,
             company: `company ${i}`,
             phone: `phone ${i}`,
-            key: i+20
+            key: i + 20
         })
     }
 
@@ -70,7 +70,7 @@ const Contact = () => {
             key: 'more',
             width: 100,
             fixed: 'right',
-            render: () => <Link onClick={() => setContactID(45)} to={`/Contact/${ContactID}`}>Ətraflı</Link>
+            render: () => <Link onClick={() => setContactID(45)} to={`/Contact/${ContactID}`} style={{color: '#0466c8'}}>Ətraflı</Link>
         }
 
     ];
@@ -100,8 +100,9 @@ const Contact = () => {
                                 columns={columns}
                                 dataSource={DummyData}
                                 size="middle"
-                                scroll={{y: 330}}
-                                />
+                                scroll={{ y: 330 }}
+                                pagination={{ position: ["bottomCenter"] }}
+                            />
                         </div>
                         <AddContact
                             visible={ModalVisible}
