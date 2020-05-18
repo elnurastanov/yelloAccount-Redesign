@@ -1,10 +1,14 @@
 import Api from './index'
 
+const getUserWithId = (id) => {
+    return Api.get(`users/${id}`).then(res => res)
+}
+
 const getUserWithStaffId = () => {
     return Api.get('users').then(res => res)
 }
 
-const addUser = ({staff_id, username, password}) => {
+const addUser = ({ staff_id, username, password }) => {
     return Api.post('register', {
         staff_id: staff_id,
         username: username,
@@ -12,7 +16,23 @@ const addUser = ({staff_id, username, password}) => {
     }).then(res => res)
 }
 
+
+const editUserRoles = ({ id, role }) => {
+    return Api.put('users', {
+        id: id,
+        role: role
+    }).then(res => res)
+}
+
+const deleteUser = ({ id }) => {
+    return Api.delete(`users/${id}`)
+        .then(res => res)
+}
+
 export {
     getUserWithStaffId,
-    addUser
+    getUserWithId,
+    addUser,
+    editUserRoles,
+    deleteUser
 }
