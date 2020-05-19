@@ -8,6 +8,7 @@ const getUserWithStaffId = () => {
     return Api.get('users').then(res => res)
 }
 
+
 const addUser = ({ staff_id, username, password }) => {
     return Api.post('register', {
         staff_id: staff_id,
@@ -15,6 +16,14 @@ const addUser = ({ staff_id, username, password }) => {
         password: password
     }).then(res => res)
 }
+
+const addNewUserPassword = ({id, password}) => {
+    return Api.post('users', {
+        id: id,
+        password: password
+    }).then(res => res)
+}
+
 
 
 const editUserRoles = ({ id, role }) => {
@@ -24,8 +33,16 @@ const editUserRoles = ({ id, role }) => {
     }).then(res => res)
 }
 
+
+
 const deleteUser = ({ id }) => {
     return Api.delete(`users/${id}`)
+        .then(res => res)
+}
+
+
+const activateUser = ({ id }) => {
+    return Api.put(`users/${id}`)
         .then(res => res)
 }
 
@@ -34,5 +51,7 @@ export {
     getUserWithId,
     addUser,
     editUserRoles,
-    deleteUser
+    deleteUser,
+    activateUser,
+    addNewUserPassword
 }

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getUserWithStaffId, deleteUser } from '../../../routes/UserController'
+import { getUserWithStaffId, deleteUser, activateUser } from '../../../routes/UserController'
 import ModifyUser from './modal/modifyUsers'
+import EditUserPassword from './modal/editUserPassword'
 import { Table, Divider, message, Tag, Tooltip, Modal } from 'antd'
-import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { ExclamationCircleOutlined, DeleteOutlined, EditOutlined, KeyOutlined, UpCircleOutlined } from '@ant-design/icons'
 
 const _getUsers = ({ setState, history }) => {
     getUserWithStaffId()
@@ -25,7 +26,10 @@ const _getUsers = ({ setState, history }) => {
 const Users = () => {
 
     const history = useHistory()
-    const [ModalVisible, setModalVisible] = useState(false)
+    const [ModalVisible, setModalVisible] = useState({
+        modifyUserRole: false,
+        editUserPassword: false
+    })
     const [IdForModal, setIdForModal] = useState(undefined)
     const [Data, setData] = useState([])
     const { confirm } = Modal
@@ -43,7 +47,6 @@ const Users = () => {
                         if (status === 500) history.replace('/500')
 
                     }
-                    if (error === 'Network Error') message.warning('Serverə qoşulma zamanı xəta baş verdi')
                 }
             )
     }, [history])
@@ -70,27 +73,49 @@ const Users = () => {
             title: 'Rolu',
             key: 'role',
             dataIndex: 'role',
-            render: role => (
+            render: (role, data) => (
                 <span>
 
-                    {role.map(tag => {
+                    {data.status === "Aktiv"
+                        ? role.map(tag => {
 
-                        let color = undefined;
-                        if (tag === 'Super Admin') color = '#264653'
-                        if (tag === 'Adminstrator') color = '#2A9D8F'
-                        if (tag === 'Accountant') color = '#E9C46A'
-                        if (tag === 'Human Resources') color = '#F4A261'
-                        if (tag === 'Customer Services') color = '#E76F51'
-                        if (tag === 'Employee') color = '#803227'
+                            let color = undefined;
+                            if (tag === 'Super Admin') color = '#264653'
+                            if (tag === 'Adminstrator') color = '#2A9D8F'
+                            if (tag === 'Accountant') color = '#E9C46A'
+                            if (tag === 'Human Resources') color = '#F4A261'
+                            if (tag === 'Customer Services') color = '#E76F51'
+                            if (tag === 'Employee') color = '#803227'
 
-                        return (
+                            return (
 
-                            <Tag color={color} key={tag}>
-                                {tag.toUpperCase()}
-                            </Tag>
+                                <Tag color={color} key={tag} style={{ marginBottom: 5 }}>
+                                    {tag.toUpperCase()}
+                                </Tag>
 
-                        );
-                    })}
+                            );
+                        })
+                        : role.map(tag => {
+
+                            let color = undefined;
+                            if (tag === 'Super Admin') color = '#595959'
+                            if (tag === 'Adminstrator') color = '#595959'
+                            if (tag === 'Accountant') color = '#595959'
+                            if (tag === 'Human Resources') color = '#595959'
+                            if (tag === 'Customer Services') color = '#595959'
+                            if (tag === 'Employee') color = '#595959'
+
+                            return (
+
+                                <Tag color={color} key={tag} style={{ marginBottom: 5 }}>
+                                    {tag.toUpperCase()}
+                                </Tag>
+
+                            );
+                        })
+                    }
+
+
 
                 </span>
             ),
@@ -108,40 +133,122 @@ const Users = () => {
                     text: 'Deaktiv',
                     value: 'Deaktiv',
                 }
-            ]
+            ],
+            onFilter: (value, record) => record.status.indexOf(value) === 0,
         },
         {
             title: 'Əməliyyatlar',
             key: 'action',
             render: (data) =>
-                
+
                 <div>
-                    <span
-                        style={{ color: '#0466c8', cursor: 'pointer' }}
-                        onClick={() => {
-                            setIdForModal(data.id);
-                            setModalVisible(true);
-                        }}
-                    >
+                    {
 
-                        Düzəliş et
+                        data.status === "Aktiv"
+                            ?
+                            <div>
 
-                    </span>
+                                <Tooltip title="Düzəliş et">
+                                    <EditOutlined
+                                        style={{ color: '#0466c8', cursor: 'pointer', fontSize: 17 }}
+                                        onClick={() => {
+                                            setIdForModal(data.id);
+                                            setModalVisible({ ...ModalVisible, modifyUserRole: true });
+                                        }}
+                                    />
+                                </Tooltip>
 
-                    <Divider type="vertical" />
 
-                    <span
-                        style={{ color: '#d62828', cursor: 'pointer' }}
-                        onClick={() => showDeleteConfirm(data.id)}
-                    >
+                                <Divider type="vertical" />
 
-                        İstifadəçini sil
+                                <Tooltip title="Şifrəni dəyiş">
 
-                    </span>
+                                    <KeyOutlined
+                                        style={{ color: '#eb5e28', cursor: 'pointer', fontSize: 17 }}
+                                        onClick={() => {
+                                            setIdForModal(data.id);
+                                            setModalVisible({ ...ModalVisible, editUserPassword: true })
+                                        }}
+                                    />
+
+                                </Tooltip>
+
+
+                                <Divider type="vertical" />
+
+                                <Tooltip title="İstifadəçini sil">
+
+                                    <DeleteOutlined
+                                        style={{ color: '#d62828', cursor: 'pointer', fontSize: 17 }}
+                                        onClick={() => showDeleteConfirm(data.id)}
+                                    />
+
+                                </Tooltip>
+
+                            </div>
+                            :
+                            <Tooltip title="Aktiv et">
+
+                                <UpCircleOutlined
+                                    style={{ color: '#00a896', cursor: 'pointer', fontSize: 17 }}
+                                    onClick={() => showActivateConfirm(data.id)}
+                                />
+
+                            </Tooltip>
+
+                    }
                 </div>
+
 
         },
     ];
+
+    const showActivateConfirm = (id) => {
+        confirm({
+            title: 'İstifadəçini aktivləşdirməyə əminsiniz?',
+            icon: <ExclamationCircleOutlined />,
+            content: (
+                <div>
+
+                    <span>Aktiv olunmuş istifadəçi yenidən sistemə giriş edə biləcək.</span>
+
+                </div>
+            ),
+            okText: 'Bəli',
+            okType: 'primary',
+            cancelText: 'Xeyr',
+            onOk() {
+
+                activateUser({
+                    id: id
+                }).then(
+                    result => {
+
+                        const { status, data } = result
+                        if (status === 200) {
+
+                            message.success(data.message);
+                            _getUsers({ setState: setData, history: history })
+
+                        }
+
+                    }
+                ).catch(
+                    error => {
+
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+
+                        }
+
+                    }
+                )
+            },
+            onCancel() { },
+        });
+    }
 
     const showDeleteConfirm = (id) => {
         confirm({
@@ -197,8 +304,8 @@ const Users = () => {
                 pagination={{ position: ["bottomCenter"] }}
             />
             <ModifyUser
-                visible={ModalVisible}
-                onVisible={(value) => setModalVisible(value)}
+                visible={ModalVisible.modifyUserRole}
+                onVisible={(value) => setModalVisible({ ...ModalVisible, modifyUserRole: value })}
                 getID={IdForModal}
                 refresh={() => {
                     _getUsers({
@@ -206,6 +313,11 @@ const Users = () => {
                         history: history
                     })
                 }}
+            />
+            <EditUserPassword
+                visible={ModalVisible.editUserPassword}
+                onVisible={(value) => setModalVisible({ ...ModalVisible, editUserPassword: value })}
+                getID={IdForModal}
             />
         </section>
 

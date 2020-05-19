@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { getUserWithId, editUserRoles } from '../../../../routes/UserController'
-import { Modal, Button, Checkbox, Divider } from 'antd'
+import { Modal, Button, Checkbox, Divider, message } from 'antd'
 
 const CheckboxGroup = Checkbox.Group;
 
 const ModifyUser = ({ visible, onVisible = (value) => { }, getID, refresh = () => { } }) => {
-
+    
+    const history = useHistory()
     const [Userdata, setUserdata] = useState({
         id: undefined,
         username: undefined,
@@ -51,18 +53,27 @@ const ModifyUser = ({ visible, onVisible = (value) => { }, getID, refresh = () =
     }, [visible, getID])
 
     const sendData = () => {
-        
+
         editUserRoles({
             id: Userdata.id,
             role: Userdata.role
         }).then(
             result => {
-                console.log(result);
+
+                const data = result.data;
+                message.success(data.message);
                 refresh();
                 onVisible(false);
             }
         ).catch(
-            error => console.log(error)
+            error => {
+                if (error.response) {
+
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500');
+
+                }            
+            }
         )
 
     }
@@ -70,7 +81,7 @@ const ModifyUser = ({ visible, onVisible = (value) => { }, getID, refresh = () =
     return (
         <div>
             <Modal
-                title="İstifadəçi"
+                title="İstifadəçinin rolu"
                 visible={visible}
                 onCancel={() => onVisible(false)}
                 footer={[
@@ -94,7 +105,7 @@ const ModifyUser = ({ visible, onVisible = (value) => { }, getID, refresh = () =
                                     indeterminate: false,
                                     checkAll: e.target.checked,
                                 });
-                                setUserdata({...Userdata, role: e.target.checked ? plainOptions : []})
+                                setUserdata({ ...Userdata, role: e.target.checked ? plainOptions : [] })
                             }
                         }
                         checked={Check.checkAll}
