@@ -1,11 +1,6 @@
 import React, { useState, Suspense, useEffect } from 'react';
 import './main.css'
-import {
-  Switch,
-  Route,
-  Link,
-  Redirect
-} from "react-router-dom";
+import { Switch, Route, Link, Redirect } from "react-router-dom";
 import appConfig from '../../../config/appconfig'
 import { Layout, Menu, Spin, Dropdown } from 'antd';
 import {
@@ -34,16 +29,45 @@ const Users = React.lazy(() => import('../../panel/users'))
 function Main() {
 
   const [collapsed, setCollapsed] = useState(true)
-  const [Userdata, setUserdata] = useState(undefined)
-  
+  const [Userdata, setUserdata] = useState({
+    staff: undefined
+  })
+  const [userRole, setuserRole] = useState({
+    sa: false,
+    admin: false,
+    account: false,
+    hr: false,
+    cs: false,
+    employee: false
+  })
+  const temp = JSON.parse(window.sessionStorage.getItem(appConfig.sessionStorage))
+  const roles = temp.role.split(",")
+
+
   function toggle() {
     setCollapsed(!collapsed)
   }
-  
+
 
   useEffect(() => {
 
-    setUserdata(JSON.parse(window.sessionStorage.getItem(appConfig.sessionStorage)).staff)
+
+    setUserdata((Userdata) => {
+      return {
+        ...Userdata,
+        staff: temp.staff,
+        role: temp.role.split(",")
+      }
+    })
+
+    roles.map(data => {
+      if (data === "Super Admin") setuserRole((userRole) => { return { ...userRole, sa: true } })
+      if (data === "Adminstrator") setuserRole((userRole) => { return { ...userRole, admin: true } })
+      if (data === "Accountant") setuserRole((userRole) => { return { ...userRole, account: true } })
+      if (data === "Human Resources") setuserRole((userRole) => { return { ...userRole, hr: true } })
+      if (data === "Customer Services") setuserRole((userRole) => { return { ...userRole, cs: true } })
+      if (data === "Employee") setuserRole((userRole) => { return { ...userRole, employee: true } })
+    })
 
   }, [])
 
@@ -113,16 +137,31 @@ function Main() {
               <UploadOutlined />
               <span>Monitor</span>
             </Menu.Item>
-            <Menu.Item key="13" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Leader"></Link>
-              <UploadOutlined />
-              <span>Rəhbər üçün</span>
-            </Menu.Item>
-            <Menu.Item key="14" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Users"></Link>
-              <PartitionOutlined />
-              <span>İstifadəçilər</span>
-            </Menu.Item>
+            {
+              userRole.account ?
+
+                <Menu.Item key="13" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Leader"></Link>
+                  <UploadOutlined />
+                  <span>Rəhbər üçün</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa ?
+
+                <Menu.Item key="14" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Users"></Link>
+                  <PartitionOutlined />
+                  <span>İstifadəçilər</span>
+                </Menu.Item> :
+
+                null
+
+            }
+
+
           </Menu>
         </Sider>
         <Layout className="site-layout">
@@ -161,7 +200,7 @@ function Main() {
                 style={{ fontWeight: 500, cursor: 'pointer', paddingRight: 24 }}
               >
 
-                {Userdata} <DownOutlined />
+                {Userdata.staff} <DownOutlined />
 
               </span>
             </Dropdown>
