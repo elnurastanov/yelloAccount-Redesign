@@ -1,20 +1,38 @@
-import React, { useState, Suspense } from 'react'
+import React, { useState, Suspense, useEffect } from 'react'
+import appConfig from '../../../config/appconfig'
+import { panelAuth } from '../../../routes/AuthController'
 import './contact.css'
-import {
-    Switch,
-    Route,
-    Link
-} from "react-router-dom"
+import { Switch, Route, Link, useHistory } from "react-router-dom"
 import AddContact from './modal/addContact'
 import { Breadcrumb, Table, Button, Spin } from 'antd';
 import { PlusCircleOutlined } from '@ant-design/icons'
 
+
+const temp = JSON.parse(window.sessionStorage.getItem(appConfig.sessionStorage)).role
 const ContactInfo = React.lazy(() => import('./contactInfo'))
 
 const Contact = () => {
 
+    const history = useHistory()
     const [ModalVisible, setModalVisible] = useState(false)
     const [DummyData, setDummyData] = useState([])
+
+    useEffect(() => {
+        panelAuth({
+            panel: 'Contact',
+            userRole: temp.split(',')
+        }).then(
+            result => null
+        ).catch(
+            error => {
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 403) history.replace('/403')
+
+                }
+            }
+        )
+    }, [])
 
     for (let i = 0; i < 50; i++) {
         DummyData.push({
@@ -70,7 +88,7 @@ const Contact = () => {
             key: 'more',
             width: 100,
             fixed: 'right',
-            render: () => <Link onClick={() => setContactID(45)} to={`/Contact/${ContactID}`} style={{color: '#0466c8'}}>Ətraflı</Link>
+            render: () => <Link onClick={() => setContactID(45)} to={`/Contact/${ContactID}`} style={{ color: '#0466c8' }}>Ətraflı</Link>
         }
 
     ];

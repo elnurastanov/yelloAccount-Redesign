@@ -58,7 +58,7 @@ function Main() {
         staff: temp.staff,
         role: temp.role.split(",")
       }
-    })
+    });
 
     roles.map(data => {
       if (data === "Super Admin") setuserRole((userRole) => { return { ...userRole, sa: true } })
@@ -77,68 +77,140 @@ function Main() {
         <Sider trigger={null} collapsible collapsed={collapsed}>
           <div className="logo" />
           <Menu theme="dark" mode="inline">
-            <Menu.Item key="1" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/"></Link>
-              <UserOutlined />
-              <span>Dashboard</span>
-            </Menu.Item>
-            <Menu.Item key="2" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Organization"></Link>
-              <BankOutlined />
-              <span>Təşkilat</span>
-            </Menu.Item>
-            <Menu.Item key="3" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Bank"></Link>
-              <UploadOutlined />
-              <span>Bank</span>
-            </Menu.Item>
-            <Menu.Item key="4" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Treasure"></Link>
-              <UploadOutlined />
-              <span>Xəzinə</span>
-            </Menu.Item>
-            <Menu.Item key="5" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Buy"></Link>
-              <UploadOutlined />
-              <span>Alış</span>
-            </Menu.Item>
-            <Menu.Item key="6" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Sale"></Link>
-              <UploadOutlined />
-              <span>Satış</span>
-            </Menu.Item>
-            <Menu.Item key="7" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Sale"></Link>
-              <UploadOutlined />
-              <span>Satış</span>
-            </Menu.Item>
-            <Menu.Item key="8" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/QMA"></Link>
-              <UploadOutlined />
-              <span>QMA</span>
-            </Menu.Item>
-            <Menu.Item key="9" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Salary"></Link>
-              <ContactsOutlined />
-              <span>Əmək haqqı</span>
-            </Menu.Item>
-            <Menu.Item key="10" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Staff"></Link>
-              <TeamOutlined />
-              <span>Kadrlar</span>
-            </Menu.Item>
-            <Menu.Item key="11" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Contact"></Link>
-              <UserSwitchOutlined />
-              <span>Kontakt</span>
-            </Menu.Item>
-            <Menu.Item key="12" style={{ height: "3rem", lineHeight: "3rem" }}>
-              <Link to="/Monitor"></Link>
-              <UploadOutlined />
-              <span>Monitor</span>
-            </Menu.Item>
             {
-              userRole.account ?
+              userRole.employee ?
+
+                <Menu.Item key="1" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/"></Link>
+                  <UserOutlined />
+                  <span>Dashboard</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin ?
+
+                <Menu.Item key="2" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Organization"></Link>
+                  <BankOutlined />
+                  <span>Təşkilat</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.account ?
+
+                <Menu.Item key="3" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Bank"></Link>
+                  <UploadOutlined />
+                  <span>Bank</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.account ?
+
+                <Menu.Item key="4" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Treasure"></Link>
+                  <UploadOutlined />
+                  <span>Xəzinə</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.account ?
+
+                <Menu.Item key="5" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Buy"></Link>
+                  <UploadOutlined />
+                  <span>Alış</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.account ?
+
+                <Menu.Item key="6" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Sale"></Link>
+                  <UploadOutlined />
+                  <span>Satış</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.account ?
+
+                <Menu.Item key="7" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/ADV"></Link>
+                  <UploadOutlined />
+                  <span>ƏDV</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.account ?
+
+                <Menu.Item key="8" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/QMA"></Link>
+                  <UploadOutlined />
+                  <span>QMA</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.account ?
+
+                <Menu.Item key="9" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Salary"></Link>
+                  <ContactsOutlined />
+                  <span>Əmək haqqı</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.hr ?
+
+                <Menu.Item key="10" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Staff"></Link>
+                  <TeamOutlined />
+                  <span>Kadrlar</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin || userRole.cs ?
+
+                <Menu.Item key="11" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Contact"></Link>
+                  <UserSwitchOutlined />
+                  <span>Kontakt</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin ?
+
+                <Menu.Item key="12" style={{ height: "3rem", lineHeight: "3rem" }}>
+                  <Link to="/Monitor"></Link>
+                  <UploadOutlined />
+                  <span>Monitor</span>
+                </Menu.Item> :
+
+                null
+            }
+            {
+              userRole.sa || userRole.admin ?
 
                 <Menu.Item key="13" style={{ height: "3rem", lineHeight: "3rem" }}>
                   <Link to="/Leader"></Link>

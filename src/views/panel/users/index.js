@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import appConfig from '../../../config/appconfig'
+import { panelAuth } from '../../../routes/AuthController'
 import { getUserWithStaffId, deleteUser, activateUser } from '../../../routes/UserController'
 import ModifyUser from './modal/modifyUsers'
 import EditUserPassword from './modal/editUserPassword'
 import { Table, Divider, message, Tag, Tooltip, Modal } from 'antd'
 import { ExclamationCircleOutlined, DeleteOutlined, EditOutlined, KeyOutlined, UpCircleOutlined } from '@ant-design/icons'
+
+const temp = JSON.parse(window.sessionStorage.getItem(appConfig.sessionStorage)).role
 
 const _getUsers = ({ setState, history }) => {
     getUserWithStaffId()
@@ -35,6 +39,22 @@ const Users = () => {
     const { confirm } = Modal
 
     useEffect(() => {
+
+        panelAuth({
+            panel: 'Users',
+            userRole: temp.split(',')
+        }).then(
+            result => null
+        ).catch(
+            error => {
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 403) history.replace('/403')
+
+                }
+            }
+        )
+
         getUserWithStaffId()
             .then(
 
