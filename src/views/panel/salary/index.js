@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
+import { panelAuth } from '../../../routes/AuthController'
+import appConfig from '../../../config/appconfig'
 import './salary.css'
 import { Form, Select, DatePicker, Input, InputNumber, Progress, Button } from 'antd'
 // import moment from 'moment'
 import { FormOutlined } from '@ant-design/icons'
+
+const temp = JSON.parse(window.sessionStorage.getItem(appConfig.sessionStorage)).role
 
 // Form PROPS
 const layout = {
@@ -16,8 +21,9 @@ const validateMessages = {
 
 
 
-function Salary() {
+const Salary = () => {
 
+    const history = useHistory()
     //Salary Components State
     const [salaryState, setSalaryState] = useState({
         salaryCompany: undefined,
@@ -35,6 +41,22 @@ function Salary() {
     const [form] = Form.useForm();
     
     useEffect(() => {
+
+        panelAuth({
+            panel: 'staff',
+            userRole: temp.split(',')
+        }).then(
+            result => null
+        ).catch(
+            error => {
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 403) history.replace('/403')
+
+                }
+            }
+        )
+
         form.setFieldsValue({
             salaryCompany: undefined,
             salaryExpenseType: undefined,
@@ -44,7 +66,7 @@ function Salary() {
             salaryDestination: '',
             salaryExpenseChannel: undefined,
         });
-    }, [form])
+    }, [form, history])
 
     // Select Component
     const options = [{ value: "Yello" }, { value: "YelloAD" }]

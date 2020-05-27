@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import { getDepartments, deleteDepartments, getPositions, deletePositions, getOrganizationCounts } from '../../../../routes/OrganizationController'
 import AddDeapartmentModal from '../modal/department/addDepartment'
 import ModifyDeapartmentModal from '../modal/department/modifyDepartment'
@@ -10,16 +11,24 @@ import { PlusCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons
 const { confirm } = Modal;
 
 
-const _getdepartments = (setState) => {
-    getDepartments().then(
-        result => setState(result.data)
-    )
+const _getdepartments = (setState, history) => {
+    getDepartments()
+        .then(result => setState(result.data))
+        .catch(
+            error => {
+                if (error.response) {
+
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+
+                }
+            }
+        )
 }
 
 const _getpositions = (setState) => {
-    getPositions().then(
-        result => setState(result.data)
-    )
+    getPositions()
+    .then(result => setState(result.data))
 }
 
 const _getorganizationCounts = (setstate) => {
@@ -30,6 +39,7 @@ const _getorganizationCounts = (setstate) => {
 
 function Content() {
 
+    const history = useHistory()
     const [ContentModalVisible, setContentModalVisible] = useState({
         addDepartment: false,
         modifyDepartment: false,
@@ -42,8 +52,17 @@ function Content() {
     const [OrganizationCount, setOrganizationCount] = useState({})
 
     useEffect(() => {
-        getDepartments().then(
-            result => setdepartmentData(result.data)
+        getDepartments()
+        .then(result => setdepartmentData(result.data))
+        .catch(
+            error => {
+                if (error.response) {
+
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/')
+
+                }
+            }
         );
         getPositions().then(
             result => setpositionData(result.data)
@@ -51,7 +70,7 @@ function Content() {
         getOrganizationCounts().then(
             result => setOrganizationCount(result.data)
         )
-    }, [])
+    }, [history])
 
     function showDepartmentDeleteConfirm(id) {
         confirm({
@@ -65,7 +84,7 @@ function Content() {
                 deleteDepartments(id).then(result => {
                     if (result.status === 200) {
                         message.success('Şirkət uğurla silindi');
-                        _getdepartments(setdepartmentData);
+                        _getdepartments(setdepartmentData, history);
                         _getorganizationCounts(setOrganizationCount)
                     }
                 })
@@ -154,7 +173,7 @@ function Content() {
                     AddDepartmentVisible={ContentModalVisible.addDepartment}
                     onAddDepartmentVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, addDepartment: value })}
                     refresh={() => {
-                        _getdepartments(setdepartmentData);
+                        _getdepartments(setdepartmentData, history);
                         _getorganizationCounts(setOrganizationCount)
                     }}
                 />
@@ -164,7 +183,7 @@ function Content() {
                     onModifyDepartmentVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, modifyDepartment: value })}
                     getID={IdForModal}
                     refresh={() => {
-                        _getdepartments(setdepartmentData);
+                        _getdepartments(setdepartmentData, history);
                         _getorganizationCounts(setOrganizationCount)
                     }}
                 />

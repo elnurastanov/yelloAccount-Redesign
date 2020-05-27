@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 import { getCompanies, getDepartmentsByCompanyID, getPositionsByDepartmentID } from '../../../../routes/OrganizationController'
 import { addStaff } from '../../../../routes/StaffController'
 import { Form, Input, Select, DatePicker, Button, message } from 'antd'
@@ -14,14 +15,16 @@ import {
 } from '@ant-design/icons'
 
 
+
 // Form PROPS
 const layout = {
     labelCol: { span: 16 },
     wrapperCol: { span: 16 },
 };
 
-function StaffFrom({onChangeRelaod = () => {}}) {
+const StaffFrom = ({ onChangeRelaod = () => { } }) => {
 
+    const history = useHistory()
     // Select Component
     const { Option } = Select;
     const [CompanyOption, setCompanyOption] = useState([])
@@ -34,15 +37,18 @@ function StaffFrom({onChangeRelaod = () => {}}) {
     })
 
     useEffect(() => {
+
         getCompanies().then(
             result => setCompanyOption(result.data)
         ).catch(
             error => {
-                console.log(`getCompany error => ${error}`);
-                message.error('Xəta baş verdi')
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+                }
             }
         )
-    }, [])
+    }, [history])
 
     useEffect(() => {
         if (DropdownData.company_id) {
@@ -52,17 +58,19 @@ function StaffFrom({onChangeRelaod = () => {}}) {
                 }
             ).catch(
                 error => {
-                    console.log(`getDepartment error => ${error}`);
-                    message.error('Xəta baş verdi')
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+                    }
                 }
             ).finally(
-                () => { 
+                () => {
                     setDropdownData((DropdownData) => { return { ...DropdownData, department_id: undefined } });
                     setDropdownData((DropdownData) => { return { ...DropdownData, position_id: undefined } })
                 }
             )
         }
-    }, [DropdownData.company_id])
+    }, [DropdownData.company_id, history])
 
     useEffect(() => {
         if (DropdownData.department_id) {
@@ -70,14 +78,16 @@ function StaffFrom({onChangeRelaod = () => {}}) {
                 result => setPositionOption(result.data)
             ).catch(
                 error => {
-                    console.log(`getPosition error => ${error}`);
-                    message.error('Xəta baş verdi')
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+                    }
                 }
             ).finally(
                 () => { setDropdownData((DropdownData) => { return { ...DropdownData, position_id: undefined } }) }
             )
         }
-    }, [DropdownData.department_id])
+    }, [DropdownData.department_id, history])
 
     //Staff Form
     const [form] = Form.useForm();
@@ -115,7 +125,7 @@ function StaffFrom({onChangeRelaod = () => {}}) {
             note: event.staffNote
         }).then(
             result => {
-                if(result.status === 201){
+                if (result.status === 201) {
                     message.success('Əməkdaş uğurla əlavə edildi');
                     ResetForm();
                     onChangeRelaod(true);
@@ -123,15 +133,17 @@ function StaffFrom({onChangeRelaod = () => {}}) {
             }
         ).catch(
             error => {
-                message.error('Xəta baş verdi');
-                console.log(`addStaff Error => ${error}`)
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+                }
             }
         )
     }
 
     function ResetForm() {
         form.resetFields();
-        setDropdownData({company_id: undefined, department_id: undefined, position_id: undefined})
+        setDropdownData({ company_id: undefined, department_id: undefined, position_id: undefined })
     }
 
     return (

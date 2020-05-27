@@ -22,7 +22,6 @@ const _getUsers = ({ setState, history }) => {
                     if (status === 500) history.replace('/500')
 
                 }
-                if (error === 'Network Error') message.warning('Serverə qoşulma zamanı xəta baş verdi')
             }
         )
 }
@@ -41,7 +40,7 @@ const Users = () => {
     useEffect(() => {
 
         panelAuth({
-            panel: 'Users',
+            panel: 'users',
             userRole: temp.split(',')
         }).then(
             result => null

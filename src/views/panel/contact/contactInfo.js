@@ -1,11 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
+import appConfig from '../../../config/appconfig'
+import { panelAuth } from '../../../routes/AuthController'
 import './contact.css'
 import { Input, Button, Divider, Select, Timeline } from 'antd'
 import { EditOutlined, CheckOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
+const temp = JSON.parse(window.sessionStorage.getItem(appConfig.sessionStorage)).role
 const { TextArea } = Input;
 
 const ContactInfo = () => {
+
+    const history = useHistory()
+
+    useEffect(() => {
+        panelAuth({
+            panel: 'Contact',
+            userRole: temp.split(',')
+        }).then(
+            result => null
+        ).catch(
+            error => {
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 403) history.replace('/403')
+
+                }
+            }
+        )
+    }, [history])
 
     const [ComponentStatus, setComponentStatus] = useState({
         company: true,
@@ -163,7 +186,7 @@ const ContactInfo = () => {
                     <Button
                         type='link'
                         icon={ComponentStatus.note ? <EditOutlined /> : <CheckOutlined />}
-                        onClick={() => { setComponentStatus({ ...ComponentStatus, note: !ComponentStatus.note }) }}
+                        onClick={() => { setComponentStatus({ ...ComponentStatus, note: !ComponentStatus.note }); setCompanySelect([]); setStaffSelect([]) }}
                     ></Button>
                 </div>
             </div>

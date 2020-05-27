@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import { getCompanies, getDepartmentsByID, editDepartments } from '../../../../../routes/OrganizationController'
 import { Modal, Input, Typography, Select, message } from 'antd';
 import { PartitionOutlined } from '@ant-design/icons'
@@ -10,6 +11,7 @@ const { Option } = Select
 
 function ModifyDeapartmentModal({ ModifyDepartmentVisible, onModifyDepartmentVisibleChange = (value) => { }, getID, refresh = () => { } }) {
 
+    const history = useHistory()
     const [CompanyOption, setCompanyOption] = useState([])
     const [ModifyDepartmentData, setModifyDepartmentData] = useState({
         company_id: '',
@@ -19,15 +21,33 @@ function ModifyDeapartmentModal({ ModifyDepartmentVisible, onModifyDepartmentVis
     useEffect(() => {
 
         if (ModifyDepartmentVisible) {
-            getDepartmentsByID(getID).then(
-                result => result.data.map(data => setModifyDepartmentData(data))
-            );
-            getCompanies().then(
-                result => setCompanyOption(result.data)
+            getDepartmentsByID(getID)
+                .then(result => result.data.map(data => setModifyDepartmentData(data)))
+                .catch(
+                    error => {
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+
+                        }
+                    }
+                );
+            getCompanies()
+            .then(result => setCompanyOption(result.data))
+            .catch(
+                error => {
+                    if (error.response) {
+
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+
+                    }
+                }
             );
         }
 
-    }, [ModifyDepartmentVisible, getID])
+    }, [ModifyDepartmentVisible, getID, history])
 
     const sendData = () => {
         if (ModifyDepartmentData.company_id === '' || ModifyDepartmentData.name === '') {
@@ -39,15 +59,25 @@ function ModifyDeapartmentModal({ ModifyDepartmentVisible, onModifyDepartmentVis
                     name: ModifyDepartmentData.department_name,
                     company_id: ModifyDepartmentData.company_id
                 }
-            ).then(result => {
+            )
+            .then(
+                result => {
                 if (result.status === 200) {
                     message.success('Departament məlumatları yeniləndi');
                     onModifyDepartmentVisibleChange(false);
                     refresh();
-                } else if (result.status === 404) {
-                    message.error('Daxili xəta baş verdi')
                 }
             })
+            .catch(
+                error => {
+                    if (error.response) {
+
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+
+                    }
+                }
+            )
         }
     }
 

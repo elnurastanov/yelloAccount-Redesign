@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import { getStaff, deleteStaff } from '../../../../routes/StaffController'
 import { List, Avatar, message, Modal } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
@@ -20,7 +21,7 @@ const _getStaff = (setState) => {
 
 function StaffLIst({ reload }) {
 
-
+    const history = useHistory()
     //Staff modal
     const [visible, setVisible] = useState(false)
     const [idForModal, setidForModal] = useState(undefined)
@@ -40,11 +41,13 @@ function StaffLIst({ reload }) {
             }
         ).catch(
             error => {
-                message.error('Xəta baş verdi');
-                console.log(`getStaff Error => ${error}`)
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+                }
             }
         )
-    }, [])
+    }, [history])
 
     function showConfirm(id) {
         confirm({

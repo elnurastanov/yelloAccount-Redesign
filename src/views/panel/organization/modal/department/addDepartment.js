@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import { getCompanies, addDepartments } from '../../../../../routes/OrganizationController'
 import { Modal, Input, Typography, Select, message } from 'antd';
 import { PartitionOutlined } from '@ant-design/icons'
@@ -8,8 +9,9 @@ const { Option } = Select
 
 
 
-function AddDeapartmentModal({ AddDepartmentVisible, onAddDepartmentVisibleChange = (value) => { }, refresh = () => {} }) {
+function AddDeapartmentModal({ AddDepartmentVisible, onAddDepartmentVisibleChange = (value) => { }, refresh = () => { } }) {
 
+    const history = useHistory()
     const [CompanyOption, setCompanyOption] = useState([])
     const [addDepartmentData, setaddDepartmentData] = useState({
         companyID: '',
@@ -17,14 +19,23 @@ function AddDeapartmentModal({ AddDepartmentVisible, onAddDepartmentVisibleChang
     })
 
     useEffect(() => {
-        
-        if(AddDepartmentVisible){
-            getCompanies().then(
-                result => setCompanyOption(result.data)
-            )
+
+        if (AddDepartmentVisible) {
+            getCompanies()
+                .then(result => setCompanyOption(result.data))
+                .catch(
+                    error => {
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+
+                        }
+                    }
+                )
         }
-        
-    }, [AddDepartmentVisible])
+
+    }, [AddDepartmentVisible, history])
 
     const sendData = () => {
         if (addDepartmentData.companyID === '' || addDepartmentData.departmentName === '') {
@@ -33,19 +44,26 @@ function AddDeapartmentModal({ AddDepartmentVisible, onAddDepartmentVisibleChang
             addDepartments({
                 id: addDepartmentData.companyID,
                 name: addDepartmentData.departmentName
-            }).then(result => {
-                if (result.status === 201) {
-                    message.success('Departament əlavə edildi');
-                    setaddDepartmentData({ companyID: '', departmentName: '' });
-                    onAddDepartmentVisibleChange(false)
-                    refresh();
-                }else if(result.status === 404){
-                    message.error('Daxili xəta baş verdi')
-                }
-            }).catch(error => {
-                console.log(error);
-                message.warning('Xəta baş verdi')
             })
+                .then(
+                    result => {
+                        if (result.status === 201) {
+                            message.success('Departament əlavə edildi');
+                            setaddDepartmentData({ companyID: '', departmentName: '' });
+                            onAddDepartmentVisibleChange(false)
+                            refresh();
+                        }
+                    })
+                .catch(
+                    error => {
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+
+                        }
+                    }
+                )
         }
     }
 

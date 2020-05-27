@@ -32,7 +32,7 @@ const Contact = () => {
                 }
             }
         )
-    }, [])
+    }, [history])
 
     for (let i = 0; i < 50; i++) {
         DummyData.push({
@@ -112,8 +112,9 @@ const Contact = () => {
                                 size='small'
                                 style={{ width: 100 }}
                                 icon={<PlusCircleOutlined />}
-                                onClick={() => { setModalVisible(true) }}
-                            >Əlavə et</Button>
+                                onClick={() => { setModalVisible(true); setDummyData([]) }}
+                            >Əlavə et
+                            </Button>
                             <Table
                                 columns={columns}
                                 dataSource={DummyData}

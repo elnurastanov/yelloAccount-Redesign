@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import AddCompanyModal from '../modal/company/addCompany'
 import ModifyCompany from '../modal/company/modifyCompany'
 import { getCompanies, deleteCompanies } from '../../../../routes/OrganizationController'
@@ -9,14 +10,24 @@ const { confirm } = Modal;
 
 
 
-const _getcompany = (setState) => {
-    getCompanies().then(
-        res => setState(res.data)
-    )
+const _getcompany = (setState, history) => {
+    getCompanies()
+        .then(res => setState(res.data))
+        .catch(
+            error => {
+                if (error.response) {
+
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+
+                }
+            }
+        )
 }
 
 function Header() {
 
+    const history = useHistory()
     const [companyDATA, setcompanyDATA] = useState([])
     const [IDForModal, setIDForModal] = useState('')
     const [AddCompanyModalVisible, setAddCompanyModalVisible] = useState({
@@ -26,11 +37,20 @@ function Header() {
 
     useEffect(() => {
 
-        getCompanies().then(
-            res => setcompanyDATA(res.data)
-        )
+        getCompanies()
+            .then(res => setcompanyDATA(res.data))
+            .catch(
+                error => {
+                    if (error.response) {
 
-    }, [])
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+
+                    }
+                }
+            )
+
+    }, [history])
 
     function showDeleteConfirm(id) {
         confirm({
@@ -41,12 +61,24 @@ function Header() {
             okType: 'danger',
             cancelText: 'Xeyr',
             onOk() {
-                deleteCompanies(id).then(result => {
-                    if (result.status === 200) {
-                        message.success('Şirkət uğurla silindi');
-                        _getcompany(setcompanyDATA);
-                    }
-                })
+                deleteCompanies(id)
+                    .then(
+                        result => {
+                            if (result.status === 200) {
+                                message.success('Şirkət uğurla silindi');
+                                _getcompany(setcompanyDATA, history);
+                            }
+                        })
+                    .catch(
+                        error => {
+                            if (error.response) {
+
+                                const { status } = error.response;
+                                if (status === 500) history.replace('/500')
+
+                            }
+                        }
+                    )
             },
         });
     }
@@ -85,14 +117,14 @@ function Header() {
             />
             <AddCompanyModal
                 visibleAddCompany={AddCompanyModalVisible.addCompany}
-                onVisibleAddCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, addCompany: value }) }} 
-                refresh={() => {_getcompany(setcompanyDATA)}}
-                />
+                onVisibleAddCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, addCompany: value }) }}
+                refresh={() => { _getcompany(setcompanyDATA, history) }}
+            />
             <ModifyCompany
                 visibleModifyCompany={AddCompanyModalVisible.modifyCompany}
                 onVisibleModifyCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, modifyCompany: value }) }}
                 getID={IDForModal}
-                refresh={() => {_getcompany(setcompanyDATA)}}
+                refresh={() => { _getcompany(setcompanyDATA, history) }}
             />
         </div>
     )

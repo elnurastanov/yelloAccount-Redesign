@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import {useHistory} from 'react-router-dom'
 import { getCompanies, getDepartmentsByCompanyID, getPositionsByDepartmentID } from '../../../../routes/OrganizationController'
 import { getStaffById, editStaff } from '../../../../routes/StaffController'
 import { Input, Select, Button, Modal, message } from 'antd'
@@ -16,8 +17,9 @@ import {
     CalendarOutlined
 } from '@ant-design/icons'
 
-function StaffModal({ visible, onVisibleChange = (value) => { }, getID, refresh = () => { } }) {
+const StaffModal = ({ visible, onVisibleChange = (value) => { }, getID, refresh = () => { } }) => {
 
+    const history = useHistory()
     const { Option } = Select;
     const [SelectOption, setSelectOption] = useState({
         companyOption: [],
@@ -78,12 +80,14 @@ function StaffModal({ visible, onVisibleChange = (value) => { }, getID, refresh 
                 }
             ).catch(
                 error => {
-                    console.log(`getStaffById Error => ${error}`);
-                    message.error('Xəta baş verdi')
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+                    }
                 }
             )
         }
-    }, [visible, getID])
+    }, [visible, getID, history])
 
     useEffect(() => {
 
@@ -96,12 +100,14 @@ function StaffModal({ visible, onVisibleChange = (value) => { }, getID, refresh 
             })
         ).catch(
             error => {
-                console.log(`getCompany Error => ${error}`);
-                message.error('Xəta baş verdi')
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+                }
             }
         )
 
-    }, [])
+    }, [history])
 
     useEffect(() => {
         if (modalData.company) {
@@ -114,8 +120,10 @@ function StaffModal({ visible, onVisibleChange = (value) => { }, getID, refresh 
                 })
             ).catch(
                 error => {
-                    console.log(`getDepartmentsByCompanyId Error => ${error}`);
-                    message.error('Xəta baş verdi')
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+                    }
                 }
             ).finally(
                 () => {
@@ -128,7 +136,7 @@ function StaffModal({ visible, onVisibleChange = (value) => { }, getID, refresh 
                 }
             )
         }
-    }, [modalData.company, modalData.defaultCompany])
+    }, [modalData.company, modalData.defaultCompany, history])
 
     useEffect(() => {
         if (modalData.department) {
@@ -141,8 +149,10 @@ function StaffModal({ visible, onVisibleChange = (value) => { }, getID, refresh 
                 })
             ).catch(
                 error => {
-                    console.log(`getPositionByDepartmentId Error => ${error}`);
-                    message.error('Xəta baş verdi')
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+                    }
                 }
             ).finally(
                 () => {
@@ -154,7 +164,7 @@ function StaffModal({ visible, onVisibleChange = (value) => { }, getID, refresh 
                 }
             )
         }
-    }, [modalData.department, modalData.defaultDepartment])
+    }, [modalData.department, modalData.defaultDepartment, history])
 
     function sendData(id) {
         if (modalData.name === '' || modalData.surname === '' || modalData.patronymic === '' || modalData.IDSerial === '' || modalData.IDFIN === '' || modalData.adress === '' || modalData.phone === '' || modalData.email === '') {
