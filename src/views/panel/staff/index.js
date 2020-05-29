@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import appConfig from '../../../config/appconfig'
-import { panelAuth } from '../../../routes/AuthController'
+import { panelAuth } from '../../../controller/AuthController'
 import './staff.css'
 import { Divider } from 'antd'
 import StaffForm from './form/form'

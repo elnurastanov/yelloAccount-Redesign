@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { panelAuth } from '../../../routes/AuthController'
+import { panelAuth } from '../../../controller/AuthController'
 import appConfig from '../../../config/appconfig'
 import './salary.css'
 import { Form, Select, DatePicker, Input, InputNumber, Progress, Button } from 'antd'
@@ -43,7 +43,7 @@ const Salary = () => {
     useEffect(() => {
 
         panelAuth({
-            panel: 'staff',
+            panel: 'salary',
             userRole: temp.split(',')
         }).then(
             result => null

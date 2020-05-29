@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { getDepartments, addPositions } from '../../../../../routes/OrganizationController'
+import { useHistory } from 'react-router-dom'
+import { getDepartments, addPositions } from '../../../../../controller/OrganizationController'
 import { Modal, Input, Typography, Select, message } from 'antd';
 import { ReconciliationOutlined } from '@ant-design/icons'
 
@@ -8,6 +9,7 @@ const { Option } = Select
 
 function AddPositionModal({ AddPositionVisible, onAddPositionVisibleChange = (value) => { }, refresh = () => { } }) {
 
+    const history = useHistory()
     const [modalDepartmentOption, setmodalDepartmentOption] = useState([])
     const [AddPositionModalData, setAddPositionModalData] = useState({
         department_id: '',
@@ -15,13 +17,13 @@ function AddPositionModal({ AddPositionVisible, onAddPositionVisibleChange = (va
     })
 
     useEffect(() => {
-        
-        if(AddPositionVisible){
+
+        if (AddPositionVisible) {
             getDepartments().then(
                 result => setmodalDepartmentOption(result.data)
             );
         }
-        
+
     }, [AddPositionVisible])
 
     function sendData() {
@@ -34,19 +36,27 @@ function AddPositionModal({ AddPositionVisible, onAddPositionVisibleChange = (va
             addPositions({
                 id: AddPositionModalData.department_id,
                 name: AddPositionModalData.position_name
-            }).then(result => {
-                if (result.status === 201) {
-                    message.success('Vəzifə əlavə edildi');
-                    setAddPositionModalData({ company_id: '', department_id: '', position_name: '' });
-                    onAddPositionVisibleChange(false)
-                    refresh();
-                } else if (result.status === 404) {
-                    message.error('Daxili xəta baş verdi')
-                }
-            }).catch(error => {
-                console.log(error);
-                message.warning('Xəta baş verdi')
             })
+                .then(
+                    result => {
+                        if (result.status === 201) {
+                            message.success('Vəzifə əlavə edildi');
+                            setAddPositionModalData({ company_id: '', department_id: '', position_name: '' });
+                            onAddPositionVisibleChange(false)
+                            refresh();
+                        }
+                    }
+                )
+                .catch(
+                    error => {
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+
+                        }
+                    }
+                )
 
         }
     }

@@ -1,6 +1,6 @@
 import React, { useState, Suspense, useEffect } from 'react'
 import appConfig from '../../../config/appconfig'
-import { panelAuth } from '../../../routes/AuthController'
+import { panelAuth } from '../../../controller/AuthController'
 import './contact.css'
 import { Switch, Route, Link, useHistory } from "react-router-dom"
 import AddContact from './modal/addContact'
@@ -19,7 +19,7 @@ const Contact = () => {
 
     useEffect(() => {
         panelAuth({
-            panel: 'Contact',
+            panel: 'contact',
             userRole: temp.split(',')
         }).then(
             result => null

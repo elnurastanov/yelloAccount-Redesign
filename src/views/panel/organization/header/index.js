@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import AddCompanyModal from '../modal/company/addCompany'
 import ModifyCompany from '../modal/company/modifyCompany'
-import { getCompanies, deleteCompanies } from '../../../../routes/OrganizationController'
+import { getCompanies, deleteCompanies } from '../../../../controller/OrganizationController'
 import { List, Card, Button, Modal, message } from 'antd';
 import { PlusCircleOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
 
@@ -91,30 +91,33 @@ function Header() {
                 onClick={() => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, addCompany: true }) }} block>
                 Şirkət əlavə et
                 </Button>
-            <List
-                grid={{ gutter: 5, column: 6 }}
-                dataSource={companyDATA}
-                renderItem={item => (
-                    <List.Item>
-                        <Card
-                            title={item.name}
-                            size='small'
-                            hoverable={true}
-                            actions={[
-                                <EditOutlined
-                                    key="edit"
-                                    onClick={() => {
-                                        setAddCompanyModalVisible({ ...AddCompanyModalVisible, modifyCompany: true });
-                                        setIDForModal(item.id)
-                                    }}
-                                />,
-                                <DeleteOutlined key="delete" onClick={() => showDeleteConfirm(item.id)} />
-                            ]}
-                        >{item.direction}
-                        </Card>
-                    </List.Item>
-                )}
-            />
+            <div className="Organization__header--list">
+                <List
+                    grid={{ gutter: 5, column: 7 }}
+                    dataSource={companyDATA}
+                    renderItem={item => (
+                        <List.Item>
+                            <Card
+                                title={item.name}
+                                size='small'
+                                hoverable={true}
+                                actions={[
+                                    <EditOutlined
+                                        key="edit"
+                                        onClick={() => {
+                                            setAddCompanyModalVisible({ ...AddCompanyModalVisible, modifyCompany: true });
+                                            setIDForModal(item.id)
+                                        }}
+                                    />,
+                                    <DeleteOutlined key="delete" onClick={() => showDeleteConfirm(item.id)} />
+                                ]}
+                            >{item.direction}
+                            </Card>
+                        </List.Item>
+                    )}
+                />
+            </div>
+
             <AddCompanyModal
                 visibleAddCompany={AddCompanyModalVisible.addCompany}
                 onVisibleAddCompanyChange={(value) => { setAddCompanyModalVisible({ ...AddCompanyModalVisible, addCompany: value }) }}

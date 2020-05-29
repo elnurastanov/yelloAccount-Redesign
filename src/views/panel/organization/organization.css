@@ -1,3 +1,7 @@
+.Organization {
+    height: 100%;
+}
+
 .ant-list{
     margin-top: 1rem;
 }
@@ -9,13 +13,17 @@
 .Organization__content{
     display: flex;
     margin-top: 1.5rem;
+    box-sizing: border-box;
+    height: 53vh;
+    justify-content: space-between;
 }
 
 .Organization__column{
     display: flex;
     flex-direction: column;
-    height: 28rem;
     margin-right: 3rem;
+    min-width: 300px;
+    width: 100%;
 }
 
 .Organization__scroll{

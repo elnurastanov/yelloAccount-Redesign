@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { panelAuth } from '../../../routes/AuthController'
+import { panelAuth } from '../../../controller/AuthController'
 import appConfig from '../../../config/appconfig'
 import './organization.css'
 import { Divider } from 'antd'
@@ -15,7 +15,7 @@ const Organization = () => {
 
     useEffect(() => {
         panelAuth({
-            panel: 'users',
+            panel: 'organization',
             userRole: temp.split(',')
         }).then(
             result => null

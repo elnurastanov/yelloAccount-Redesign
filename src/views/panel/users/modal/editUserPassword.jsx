@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { addNewUserPassword } from '../../../../routes/UserController'
+import { addNewUserPassword } from '../../../../controller/UserController'
 import { Modal, Button, Input, message } from 'antd'
 
 const NewUserPassword = ({ visible, getID, onVisible = (value) => { } }) => {
@@ -16,26 +16,28 @@ const NewUserPassword = ({ visible, getID, onVisible = (value) => { } }) => {
             addNewUserPassword({
                 id: getID,
                 password: UserPassword
-            }).then(
-                result => {
+            })
+                .then(
+                    result => {
 
-                    const resultMessage = result.data.message
+                        const resultMessage = result.data.message
 
-                    message.success(resultMessage);
-                    setUserPassword(undefined);
-                    onVisible(false);
-
-                }
-            ).catch(
-                error => {
-                    if (error.response) {
-
-                        const { status } = error.response;
-                        if (status === 500) history.replace('/500');
+                        message.success(resultMessage);
+                        setUserPassword(undefined);
+                        onVisible(false);
 
                     }
-                }
-            )
+                )
+                .catch(
+                    error => {
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500');
+
+                        }
+                    }
+                )
 
         }
 

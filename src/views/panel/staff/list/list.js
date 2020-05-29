@@ -1,22 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getStaff, deleteStaff } from '../../../../routes/StaffController'
+import { getStaff, deleteStaff } from '../../../../controller/StaffController'
 import { List, Avatar, message, Modal } from 'antd'
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import StaffModal from '../modal/modal'
 
 const { confirm } = Modal;
-const _getStaff = (setState) => {
-    getStaff().then(
-        result => {
-            setState(result.data)
-        }
-    ).catch(
-        error => {
-            message.error('Xəta baş verdi');
-            console.log(`getStaff Error => ${error}`)
-        }
-    )
+const _getStaff = (setState, history) => {
+    getStaff()
+        .then(
+            result => {
+                setState(result.data)
+            }
+        )
+        .catch(
+            error => {
+                if (error.response) {
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+
+                }
+            }
+        )
 }
 
 function StaffLIst({ reload }) {
@@ -35,18 +40,20 @@ function StaffLIst({ reload }) {
 
 
     useEffect(() => {
-        getStaff().then(
-            result => {
-                setListData(result.data)
-            }
-        ).catch(
-            error => {
-                if (error.response) {
-                    const { status } = error.response;
-                    if (status === 500) history.replace('/500')
+        getStaff()
+            .then(
+                result => {
+                    setListData(result.data)
                 }
-            }
-        )
+            )
+            .catch(
+                error => {
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+                    }
+                }
+            )
     }, [history])
 
     function showConfirm(id) {
@@ -54,19 +61,24 @@ function StaffLIst({ reload }) {
             title: 'Əmakdaşı azad etməyə əminsiniz?',
             icon: <ExclamationCircleOutlined />,
             onOk() {
-                deleteStaff(id).then(
-                    result => {
-                        if (result.status === 200) {
-                            message.success('Əməkdaş işdən azad edildi');
-                            _getStaff(setListData)
+                deleteStaff(id)
+                    .then(
+                        result => {
+                            if (result.status === 200) {
+                                message.success('Əməkdaş işdən azad edildi');
+                                _getStaff(setListData, history)
+                            }
                         }
-                    }
-                ).catch(
-                    error => {
-                        console.log(`deleteStaff Error => ${error}`);
-                        message.error('Xəta baş verdi')
-                    }
-                )
+                    )
+                    .catch(
+                        error => {
+                            if (error.response) {
+                                const { status } = error.response;
+                                if (status === 500) history.replace('/500')
+
+                            }
+                        }
+                    )
             },
             onCancel() { },
         });
@@ -120,7 +132,7 @@ function StaffLIst({ reload }) {
                 visible={visible}
                 onVisibleChange={(value) => setVisible(value)}
                 getID={idForModal}
-                refresh={() => _getStaff(setListData)}
+                refresh={() => _getStaff(setListData, history)}
             />
         </section>
 

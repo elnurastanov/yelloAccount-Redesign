@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import {useHistory} from 'react-router-dom'
-import { getCompanies, getDepartmentsByCompanyID, getPositionsByDepartmentID } from '../../../../routes/OrganizationController'
-import { getStaffById, editStaff } from '../../../../routes/StaffController'
+import { useHistory } from 'react-router-dom'
+import { getCompanies, getDepartmentsByCompanyID, getPositionsByDepartmentID } from '../../../../controller/OrganizationController'
+import { getStaffById, editStaff } from '../../../../controller/StaffController'
 import { Input, Select, Button, Modal, message } from 'antd'
 import {
     UserOutlined,
@@ -54,38 +54,40 @@ const StaffModal = ({ visible, onVisibleChange = (value) => { }, getID, refresh 
 
     useEffect(() => {
         if (visible) {
-            getStaffById(getID).then(
-                result => {
-                    setModalData((modalData) => {
-                        return {
-                            ...modalData,
-                            name: result.data.first_name,
-                            surname: result.data.last_name,
-                            patronymic: result.data.patronymic,
-                            IDSerial: result.data.id_card,
-                            IDFIN: result.data.id_FIN,
-                            adress: result.data.adress,
-                            phone: result.data.private_phone,
-                            email: result.data.private_email,
-                            startDate: result.data.join_date,
-                            serviceDate: result.data.experience,
-                            company: result.data.company_id,
-                            department: result.data.department_id,
-                            position: result.data.position_id,
-                            note: result.data.note,
-                            defaultCompany: result.data.company_id,
-                            defaultDepartment: result.data.department_id
-                        }
-                    })
-                }
-            ).catch(
-                error => {
-                    if (error.response) {
-                        const { status } = error.response;
-                        if (status === 500) history.replace('/500')
+            getStaffById(getID)
+                .then(
+                    result => {
+                        setModalData((modalData) => {
+                            return {
+                                ...modalData,
+                                name: result.data.first_name,
+                                surname: result.data.last_name,
+                                patronymic: result.data.patronymic,
+                                IDSerial: result.data.id_card,
+                                IDFIN: result.data.id_FIN,
+                                adress: result.data.adress,
+                                phone: result.data.private_phone,
+                                email: result.data.private_email,
+                                startDate: result.data.join_date,
+                                serviceDate: result.data.experience,
+                                company: result.data.company_id,
+                                department: result.data.department_id,
+                                position: result.data.position_id,
+                                note: result.data.note,
+                                defaultCompany: result.data.company_id,
+                                defaultDepartment: result.data.department_id
+                            }
+                        })
                     }
-                }
-            )
+                )
+                .catch(
+                    error => {
+                        if (error.response) {
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+                        }
+                    }
+                )
         }
     }, [visible, getID, history])
 
@@ -111,58 +113,65 @@ const StaffModal = ({ visible, onVisibleChange = (value) => { }, getID, refresh 
 
     useEffect(() => {
         if (modalData.company) {
-            getDepartmentsByCompanyID(modalData.company).then(
-                result => setSelectOption((SelectOption) => {
-                    return {
-                        ...SelectOption,
-                        departmentOption: result.data
+            getDepartmentsByCompanyID(modalData.company)
+                .then(
+                    result => setSelectOption((SelectOption) => {
+                        return {
+                            ...SelectOption,
+                            departmentOption: result.data
+                        }
+                    })
+                )
+                .catch(
+                    error => {
+                        if (error.response) {
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+                        }
                     }
-                })
-            ).catch(
-                error => {
-                    if (error.response) {
-                        const { status } = error.response;
-                        if (status === 500) history.replace('/500')
+                )
+                .finally(
+                    () => {
+                        if (modalData.company !== modalData.defaultCompany) {
+                            setModalData((modalData) => { return { ...modalData, department: undefined } });
+                            setModalData((modalData) => { return { ...modalData, position: undefined } });
+                            setModalData((modalData) => { return { ...modalData, defaultCompany: modalData.company } });
+                            setSelectOption((SelectOption) => { return { ...SelectOption, positionOption: [] } });
+                        }
                     }
-                }
-            ).finally(
-                () => {
-                    if (modalData.company !== modalData.defaultCompany) {
-                        setModalData((modalData) => { return { ...modalData, department: undefined } });
-                        setModalData((modalData) => { return { ...modalData, position: undefined } });
-                        setModalData((modalData) => { return { ...modalData, defaultCompany: modalData.company } });
-                        setSelectOption((SelectOption) => { return { ...SelectOption, positionOption: [] } });
-                    }
-                }
-            )
+                )
         }
     }, [modalData.company, modalData.defaultCompany, history])
 
     useEffect(() => {
         if (modalData.department) {
-            getPositionsByDepartmentID(modalData.department).then(
-                result => setSelectOption((SelectOption) => {
-                    return {
-                        ...SelectOption,
-                        positionOption: result.data
-                    }
-                })
-            ).catch(
-                error => {
-                    if (error.response) {
-                        const { status } = error.response;
-                        if (status === 500) history.replace('/500')
-                    }
-                }
-            ).finally(
-                () => {
-                    if (modalData.department !== modalData.defaultDepartment) {
-                        setModalData((modalData) => { return { ...modalData, position: undefined } });
-                        setModalData((modalData) => { return { ...modalData, defaultDepartment: modalData.department } });
 
+            getPositionsByDepartmentID(modalData.department)
+                .then(
+                    result => setSelectOption((SelectOption) => {
+                        return {
+                            ...SelectOption,
+                            positionOption: result.data
+                        }
+                    })
+                )
+                .catch(
+                    error => {
+                        if (error.response) {
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+                        }
                     }
-                }
-            )
+                ).finally(
+                    () => {
+                        if (modalData.department !== modalData.defaultDepartment) {
+                            setModalData((modalData) => { return { ...modalData, position: undefined } });
+                            setModalData((modalData) => { return { ...modalData, defaultDepartment: modalData.department } });
+
+                        }
+                    }
+                )
+
         }
     }, [modalData.department, modalData.defaultDepartment, history])
 
@@ -186,18 +195,23 @@ const StaffModal = ({ visible, onVisibleChange = (value) => { }, getID, refresh 
                 social_insurance: modalData.socialCard,
                 salary: modalData.salary,
                 note: modalData.note
-            }).then(
+            })
+            .then(
                 result => {
-                    if(result.status === 200){
+                    if (result.status === 200) {
                         message.success('Əməkdaş haqqında məlumatlar yeniləndi');
                         onVisibleChange(false);
                         refresh();
                     }
                 }
-            ).catch(
+            )
+            .catch(
                 error => {
-                    console.log(`editStaff Error => ${error}`);
-                    message.error('Xəta baş verdi');
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+
+                    }
                 }
             )
         }

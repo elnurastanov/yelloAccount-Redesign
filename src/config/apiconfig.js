@@ -1,10 +1,10 @@
 const config = {
     development: {
-        url: 'http://localhost:2000/v1/panel/'
+        url: 'http://localhost:2000/v1/'
     },
 
     production: {
-        url: 'http://localhost:2000/v1/panel/'
+        url: 'http://localhost:2000/v1/'
     }
 }
 

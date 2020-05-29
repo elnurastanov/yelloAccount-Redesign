@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import './register.css'
-import { getStaffByFIN } from '../../../routes/StaffController'
-import { addUser } from '../../../routes/UserController'
+import { getStaffByFIN } from '../../../controller/StaffController'
+import { addUser } from '../../../controller/UserController'
 import { useHistory } from "react-router-dom"
 import { Input, Button, Progress, message } from 'antd'
 import { UserOutlined, IdcardOutlined, KeyOutlined } from '@ant-design/icons'
@@ -34,26 +34,31 @@ const Register = () => {
         if (FIN === "") {
             message.warn('FIN kodunuzu daxil edin')
         } else {
-            getStaffByFIN(FIN).then(
-                result => {
-                    setStaffData({
-                        ...StaffData,
-                        first_name: result.data.first_name,
-                        last_name: result.data.last_name,
-                        patronymic: result.data.patronymic
-                    });
-                    setRegisterData({
-                        ...RegisterData,
-                        staffID: result.data.id
-                    });
-                    setFormStatus(false);
-                }
-            ).catch(
-                error => {
-                    message.error('Xəta baş verdi');
-                    console.log(`getStaffByFIN Error => ${error}`)
-                }
-            )
+            getStaffByFIN(FIN)
+                .then(
+                    result => {
+                        setStaffData({
+                            ...StaffData,
+                            first_name: result.data.first_name,
+                            last_name: result.data.last_name,
+                            patronymic: result.data.patronymic
+                        });
+                        setRegisterData({
+                            ...RegisterData,
+                            staffID: result.data.id
+                        });
+                        setFormStatus(false);
+                    }
+                )
+                .catch(
+                    error => {
+                        if (error.response) {
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+
+                        }
+                    }
+                )
         }
     }
 

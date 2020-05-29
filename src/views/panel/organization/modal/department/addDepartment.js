@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getCompanies, addDepartments } from '../../../../../routes/OrganizationController'
+import { getCompanies, addDepartments } from '../../../../../controller/OrganizationController'
 import { Modal, Input, Typography, Select, message } from 'antd';
 import { PartitionOutlined } from '@ant-design/icons'
 

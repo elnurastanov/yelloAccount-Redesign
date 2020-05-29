@@ -1,7 +1,7 @@
 import React, { Suspense, useState } from 'react'
 import './login.css'
 import { Link, Route, Switch } from "react-router-dom"
-import { loginUser } from '../../../routes/AuthController'
+import { loginUser } from '../../../controller/AuthController'
 import appConfig from '../../../config/appconfig'
 import { useHistory } from 'react-router-dom'
 import { Layout, Input, Button, Spin, message } from 'antd'
@@ -36,12 +36,12 @@ const Login = () => {
                 error => {
                     if (error.response) {
                         const { data, status } = error.response;
-                        if (status === 401) message.error(data.error)
-                        if (status === 404) message.warn(data.error)
+                        if (status === 401) message.error(data.message)
+                        if (status === 404) message.warn(data.message)
                         if (status === 500) history.replace('/500')
 
                     }
-                    if (error === 'Network Error') message.warning('Serverə qoşulma zamanı xəta baş verdi')
+                    console.log(`Login Error => ${error}`)
                 }
             )
         } else {

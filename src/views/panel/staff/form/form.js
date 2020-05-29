@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getCompanies, getDepartmentsByCompanyID, getPositionsByDepartmentID } from '../../../../routes/OrganizationController'
-import { addStaff } from '../../../../routes/StaffController'
+import { getCompanies, getDepartmentsByCompanyID, getPositionsByDepartmentID } from '../../../../controller/OrganizationController'
+import { addStaff } from '../../../../controller/StaffController'
 import { Form, Input, Select, DatePicker, Button, message } from 'antd'
 import {
     UserOutlined,
@@ -52,28 +52,28 @@ const StaffFrom = ({ onChangeRelaod = () => { } }) => {
 
     useEffect(() => {
         if (DropdownData.company_id) {
-            getDepartmentsByCompanyID(DropdownData.company_id).then(
-                result => {
-                    setDepartmentOption(result.data)
-                }
-            ).catch(
-                error => {
-                    if (error.response) {
-                        const { status } = error.response;
-                        if (status === 500) history.replace('/500')
+            getDepartmentsByCompanyID(DropdownData.company_id)
+                .then(result => setDepartmentOption(result.data))
+                .catch(
+                    error => {
+                        if (error.response) {
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+                        }
                     }
-                }
-            ).finally(
-                () => {
-                    setDropdownData((DropdownData) => { return { ...DropdownData, department_id: undefined } });
-                    setDropdownData((DropdownData) => { return { ...DropdownData, position_id: undefined } })
-                }
-            )
+                )
+                .finally(
+                    () => {
+                        setDropdownData((DropdownData) => { return { ...DropdownData, department_id: undefined } });
+                        setDropdownData((DropdownData) => { return { ...DropdownData, position_id: undefined } })
+                    }
+                )
         }
     }, [DropdownData.company_id, history])
 
     useEffect(() => {
         if (DropdownData.department_id) {
+
             getPositionsByDepartmentID(DropdownData.department_id).then(
                 result => setPositionOption(result.data)
             ).catch(
@@ -86,6 +86,7 @@ const StaffFrom = ({ onChangeRelaod = () => { } }) => {
             ).finally(
                 () => { setDropdownData((DropdownData) => { return { ...DropdownData, position_id: undefined } }) }
             )
+
         }
     }, [DropdownData.department_id, history])
 
@@ -123,22 +124,24 @@ const StaffFrom = ({ onChangeRelaod = () => { } }) => {
             private_phone: event.staffPhone,
             private_email: event.staffEmail,
             note: event.staffNote
-        }).then(
-            result => {
-                if (result.status === 201) {
-                    message.success('Əməkdaş uğurla əlavə edildi');
-                    ResetForm();
-                    onChangeRelaod(true);
+        })
+            .then(
+                result => {
+                    if (result.status === 201) {
+                        message.success('Əməkdaş uğurla əlavə edildi');
+                        ResetForm();
+                        onChangeRelaod(true);
+                    }
                 }
-            }
-        ).catch(
-            error => {
-                if (error.response) {
-                    const { status } = error.response;
-                    if (status === 500) history.replace('/500')
+            )
+            .catch(
+                error => {
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/500')
+                    }
                 }
-            }
-        )
+            )
     }
 
     function ResetForm() {

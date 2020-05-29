@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { getDepartments, getPositionsByID, editPositions } from '../../../../../routes/OrganizationController'
+import { useHistory } from 'react-router-dom'
+import { getDepartments, getPositionsByID, editPositions } from '../../../../../controller/OrganizationController'
 import { Modal, Input, Typography, Select, message } from 'antd';
 import { ReconciliationOutlined } from '@ant-design/icons'
 
@@ -8,6 +9,7 @@ const { Option } = Select
 
 function ModifyPositionModal({ ModifyPositionVisible, onModifyPositionVisibleChange = (value) => { }, getID, refresh = () => { } }) {
 
+    const history = useHistory()
     const [modalDepartmentOption, setmodalDepartmentOption] = useState([])
     const [ModifyPositionModalData, setModifyPositionModalData] = useState({
         department_id: '',
@@ -17,15 +19,35 @@ function ModifyPositionModal({ ModifyPositionVisible, onModifyPositionVisibleCha
     useEffect(() => {
 
         if (ModifyPositionVisible) {
-            getPositionsByID(getID).then(
-                result => result.data.map(data => setModifyPositionModalData(data))
-            );
-            getDepartments().then(
-                result => setmodalDepartmentOption(result.data)
-            )
+
+            getPositionsByID(getID)
+                .then(result => result.data.map(data => setModifyPositionModalData(data)))
+                .catch(
+                    error => {
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/')
+
+                        }
+                    }
+                );
+
+            getDepartments()
+                .then(result => setmodalDepartmentOption(result.data))
+                .catch(
+                    error => {
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/')
+
+                        }
+                    }
+                )
         }
 
-    }, [ModifyPositionVisible, getID])
+    }, [ModifyPositionVisible, getID, history])
 
     function sendData() {
         if (ModifyPositionModalData.department_id === '' || ModifyPositionModalData.name === '') {
@@ -38,18 +60,26 @@ function ModifyPositionModal({ ModifyPositionVisible, onModifyPositionVisibleCha
                 getID, {
                 department_id: ModifyPositionModalData.department_id,
                 name: ModifyPositionModalData.name
-            }).then(result => {
-                if (result.status === 200) {
-                    message.success('Vəzifə məlumatları yeniləndi');
-                    onModifyPositionVisibleChange(false);
-                    refresh();
-                } else if (result.status === 404) {
-                    message.error('Daxili xəta baş verdi')
-                }
-            }).catch(error => {
-                console.log(error);
-                message.warning('Xəta baş verdi')
             })
+                .then(
+                    result => {
+                        if (result.status === 200) {
+                            message.success('Vəzifə məlumatları yeniləndi');
+                            onModifyPositionVisibleChange(false);
+                            refresh();
+                        }
+                    }
+                )
+                .catch(
+                    error => {
+                        if (error.response) {
+
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+
+                        }
+                    }
+                )
 
         }
     }

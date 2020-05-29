@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import appConfig from '../../../config/appconfig'
-import { panelAuth } from '../../../routes/AuthController'
-import { getUserWithStaffId, deleteUser, activateUser } from '../../../routes/UserController'
+import { panelAuth } from '../../../controller/AuthController'
+import { getUserWithStaffId, deleteUser, activateUser } from '../../../controller/UserController'
 import ModifyUser from './modal/modifyUsers'
 import EditUserPassword from './modal/editUserPassword'
 import { Table, Divider, message, Tag, Tooltip, Modal } from 'antd'
@@ -42,24 +42,27 @@ const Users = () => {
         panelAuth({
             panel: 'users',
             userRole: temp.split(',')
-        }).then(
-            result => null
-        ).catch(
-            error => {
-                if (error.response) {
-                    const { status } = error.response;
-                    if (status === 403) history.replace('/403')
+        })
+            .then(
+                result => null
+            )
+            .catch(
+                error => {
+                    if (error.response) {
+                        const { status } = error.response;
+                        if (status === 403) history.replace('/403')
 
+                    }
                 }
-            }
-        )
+            )
 
         getUserWithStaffId()
             .then(
 
                 result => setData(result.data)
 
-            ).catch(
+            )
+            .catch(
                 error => {
                     if (error.response) {
                         const { status } = error.response;

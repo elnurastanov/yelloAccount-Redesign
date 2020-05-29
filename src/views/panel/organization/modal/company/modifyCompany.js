@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getCompaniesByID, editCompanies } from '../../../../../routes/OrganizationController'
+import { getCompaniesByID, editCompanies } from '../../../../../controller/OrganizationController'
 import { Modal, Input, Typography, message } from 'antd';
 import { ShopOutlined, NodeExpandOutlined } from '@ant-design/icons'
 const { Text } = Typography

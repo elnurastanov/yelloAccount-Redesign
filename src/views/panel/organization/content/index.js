@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getDepartments, deleteDepartments, getPositions, deletePositions, getOrganizationCounts } from '../../../../routes/OrganizationController'
+import { getDepartments, deleteDepartments, getPositions, deletePositions, getOrganizationCounts } from '../../../../controller/OrganizationController'
 import AddDeapartmentModal from '../modal/department/addDepartment'
 import ModifyDeapartmentModal from '../modal/department/modifyDepartment'
 import AddPositionModal from '../modal/position/addPosition'
@@ -26,15 +26,34 @@ const _getdepartments = (setState, history) => {
         )
 }
 
-const _getpositions = (setState) => {
+const _getpositions = (setState, history) => {
     getPositions()
-    .then(result => setState(result.data))
+        .then(result => setState(result.data))
+        .catch(
+            error => {
+                if (error.response) {
+
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+
+                }
+            }
+        )
 }
 
-const _getorganizationCounts = (setstate) => {
-    getOrganizationCounts().then(
-        result => setstate(result.data)
-    )
+const _getorganizationCounts = (setstate, history) => {
+    getOrganizationCounts()
+        .then(result => setstate(result.data))
+        .catch(
+            error => {
+                if (error.response) {
+
+                    const { status } = error.response;
+                    if (status === 500) history.replace('/500')
+
+                }
+            }
+        )
 }
 
 function Content() {
@@ -52,24 +71,45 @@ function Content() {
     const [OrganizationCount, setOrganizationCount] = useState({})
 
     useEffect(() => {
+
         getDepartments()
-        .then(result => setdepartmentData(result.data))
-        .catch(
-            error => {
-                if (error.response) {
+            .then(result => setdepartmentData(result.data))
+            .catch(
+                error => {
+                    if (error.response) {
 
-                    const { status } = error.response;
-                    if (status === 500) history.replace('/')
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/')
 
+                    }
                 }
-            }
-        );
-        getPositions().then(
-            result => setpositionData(result.data)
-        );
-        getOrganizationCounts().then(
-            result => setOrganizationCount(result.data)
-        )
+            );
+
+        getPositions()
+            .then(result => setpositionData(result.data))
+            .catch(
+                error => {
+                    if (error.response) {
+
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/')
+
+                    }
+                }
+            )
+
+        getOrganizationCounts()
+            .then(result => setOrganizationCount(result.data))
+            .catch(
+                error => {
+                    if (error.response) {
+
+                        const { status } = error.response;
+                        if (status === 500) history.replace('/')
+
+                    }
+                }
+            )
     }, [history])
 
     function showDepartmentDeleteConfirm(id) {
@@ -85,7 +125,7 @@ function Content() {
                     if (result.status === 200) {
                         message.success('Şirkət uğurla silindi');
                         _getdepartments(setdepartmentData, history);
-                        _getorganizationCounts(setOrganizationCount)
+                        _getorganizationCounts(setOrganizationCount, history)
                     }
                 })
             },
@@ -102,18 +142,26 @@ function Content() {
             okType: 'danger',
             cancelText: 'Xeyr',
             onOk() {
-                deletePositions(id).then(result => {
-                    if (result.status === 200) {
-                        message.success('Vəzifə uğurla silindi');
-                        _getpositions(setpositionData);
-                        _getorganizationCounts(setOrganizationCount)
-                    }
-                }).catch(
-                    error => {
-                        console.log(`deletePosition Error => ${error}`);
-                        message.error('Xəta baş verdi')
-                    }
-                )
+                deletePositions(id)
+                    .then(
+                        result => {
+                            if (result.status === 200) {
+                                message.success('Vəzifə uğurla silindi');
+                                _getpositions(setpositionData, history);
+                                _getorganizationCounts(setOrganizationCount, history)
+                            }
+                        }
+                    )
+                    .catch(
+                        error => {
+                            if (error.response) {
+
+                                const { status } = error.response;
+                                if (status === 500) history.replace('/500')
+
+                            }
+                        }
+                    )
             },
             onCancel() { },
         });
@@ -126,7 +174,7 @@ function Content() {
 
                 <Button
                     type="primary"
-                    style={{ width: 300 }}
+                    // style={{ width: 300 }}
                     icon={<PlusCircleOutlined />}
                     onClick={() => { setContentModalVisible({ ...ContentModalVisible, addDepartment: true }) }} block>
                     Departament əlavə et
@@ -174,7 +222,7 @@ function Content() {
                     onAddDepartmentVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, addDepartment: value })}
                     refresh={() => {
                         _getdepartments(setdepartmentData, history);
-                        _getorganizationCounts(setOrganizationCount)
+                        _getorganizationCounts(setOrganizationCount, history)
                     }}
                 />
 
@@ -184,7 +232,7 @@ function Content() {
                     getID={IdForModal}
                     refresh={() => {
                         _getdepartments(setdepartmentData, history);
-                        _getorganizationCounts(setOrganizationCount)
+                        _getorganizationCounts(setOrganizationCount, history)
                     }}
                 />
 
@@ -194,7 +242,7 @@ function Content() {
 
                 <Button
                     type="primary"
-                    style={{ width: 300 }}
+                    // style={{ width: 300 }}
                     icon={<PlusCircleOutlined />}
                     onClick={() => { setContentModalVisible({ ...ContentModalVisible, addPosition: true }) }} block>
                     Vəzifə əlavə et
@@ -237,8 +285,8 @@ function Content() {
                     AddPositionVisible={ContentModalVisible.addPosition}
                     onAddPositionVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, addPosition: value })}
                     refresh={() => {
-                        _getpositions(setpositionData);
-                        _getorganizationCounts(setOrganizationCount)
+                        _getpositions(setpositionData, history);
+                        _getorganizationCounts(setOrganizationCount, history)
                     }}
                 />
 
@@ -246,8 +294,8 @@ function Content() {
                     ModifyPositionVisible={ContentModalVisible.modifyPosition}
                     onModifyPositionVisibleChange={(value) => setContentModalVisible({ ...ContentModalVisible, modifyPosition: value })}
                     refresh={() => {
-                        _getpositions(setpositionData);
-                        _getorganizationCounts(setOrganizationCount)
+                        _getpositions(setpositionData, history);
+                        _getorganizationCounts(setOrganizationCount, history)
                     }}
                     getID={IdForModal}
                 />

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getUserWithId, editUserRoles } from '../../../../routes/UserController'
+import { getUserWithId, editUserRoles } from '../../../../controller/UserController'
 import { Modal, Button, Checkbox, Divider, message } from 'antd'
 
 const CheckboxGroup = Checkbox.Group;
@@ -44,13 +44,18 @@ const ModifyUser = ({ visible, onVisible = (value) => { }, getID, refresh = () =
                             })
                         }
                     }
-                ).catch(
+                )
+                .catch(
                     error => {
-                        console.log(error)
+                        if (error.response) {
+                            const { status } = error.response;
+                            if (status === 500) history.replace('/500')
+    
+                        }
                     }
                 )
 
-    }, [visible, getID])
+    }, [visible, getID, history])
 
     const sendData = () => {
 

@@ -63,12 +63,15 @@ function Main() {
 
     roles.map(data => {
 
-      if (data === "Super Admin") return setuserRole((userRole) => { return { ...userRole, sa: true } })
-      if (data === "Adminstrator") return setuserRole((userRole) => { return { ...userRole, admin: true } })
-      if (data === "Accountant") return setuserRole((userRole) => { return { ...userRole, account: true } })
-      if (data === "Human Resources") return setuserRole((userRole) => { return { ...userRole, hr: true } })
-      if (data === "Customer Services") return setuserRole((userRole) => { return { ...userRole, cs: true } })
-      if (data === "Employee") return setuserRole((userRole) => { return { ...userRole, employee: true } })
+      if (data === "Super Admin") setuserRole((userRole) => { return { ...userRole, sa: true } })
+      if (data === "Adminstrator") setuserRole((userRole) => { return { ...userRole, admin: true } })
+      if (data === "Accountant") setuserRole((userRole) => { return { ...userRole, account: true } })
+      if (data === "Human Resources") setuserRole((userRole) => { return { ...userRole, hr: true } })
+      if (data === "Customer Services") setuserRole((userRole) => { return { ...userRole, cs: true } })
+      if (data === "Employee") setuserRole((userRole) => { return { ...userRole, employee: true } })
+
+      return null
+      
     })
 
   }, [])

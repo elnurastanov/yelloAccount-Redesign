@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import appConfig from '../../../config/appconfig'
-import { panelAuth } from '../../../routes/AuthController'
+import { panelAuth } from '../../../controller/AuthController'
 import './contact.css'
 import { Input, Button, Divider, Select, Timeline } from 'antd'
 import { EditOutlined, CheckOutlined, ClockCircleOutlined, CheckCircleOutlined, CloseCircleOutlined, ExclamationCircleOutlined } from '@ant-design/icons'
